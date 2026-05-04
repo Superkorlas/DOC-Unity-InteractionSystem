@@ -1,0 +1,321 @@
+---
+title: "InteractorBase"
+description: "Abstract base class for all interactors. Implements the core logic for action 
+management, selection, and event raising, while leaving the detection logic to subclasses."
+sidebar:
+  label: "InteractorBase"
+---
+
+**Namespace:** `FireSoftworks.Interaction`  
+**Type:** Class  
+
+Abstract base class for all interactors. Implements the core logic for action 
+management, selection, and event raising, while leaving the detection logic to subclasses.
+
+```csharp
+public abstract class InteractorBase : MonoBehaviour, IInteractor
+```
+
+## Events
+
+### `ActionExecuted`
+
+Fired when an action is successfully executed.
+
+```csharp
+public event Action<ActionExecutedEventArgs> ActionExecuted
+```
+
+### `ActionSelectionChanged`
+
+Fired when the selected action changes.
+
+```csharp
+public event Action<ActionSelectionChangedEventArgs> ActionSelectionChanged
+```
+
+### `ActionsDiscovered`
+
+Fired when actions are discovered on a target.
+
+```csharp
+public event Action<ActionsDiscoveredEventArgs> ActionsDiscovered
+```
+
+### `InteractionEnded`
+
+Fired when the interactor stops focusing on a target.
+
+```csharp
+public event Action<InteractionLifecycleEventArgs> InteractionEnded
+```
+
+### `InteractionStarted`
+
+Fired when the interactor starts focusing on a target.
+
+```csharp
+public event Action<InteractionLifecycleEventArgs> InteractionStarted
+```
+
+### `ShowActionsDiscovered`
+
+Fired when actions should be displayed in the UI.
+
+```csharp
+public event Action<ActionsDiscoveredEventArgs> ShowActionsDiscovered
+```
+
+## Methods
+
+### `ClearCurrentTarget()`
+
+```csharp
+protected virtual void ClearCurrentTarget()
+```
+
+### `EndInteraction()`
+
+Cancels the current interaction and clears the target.
+
+```csharp
+public virtual void EndInteraction()
+```
+
+### `ExecuteInteraction()`
+
+Executes the currently selected action.
+
+```csharp
+public virtual void ExecuteInteraction()
+```
+
+### `GetVisibleActions()`
+
+Returns the list of actions that should be visible in the UI.
+
+```csharp
+public List<IInteractableAction> GetVisibleActions()
+```
+
+### `HandleInteraction()`
+
+Handles interaction input, either showing actions or executing the selected one.
+
+```csharp
+public virtual void HandleInteraction()
+```
+
+### `IsInteracting()`
+
+Checks if the interactor is currently in interaction mode or has a target.
+
+```csharp
+public virtual bool IsInteracting()
+```
+
+### `RaiseActionExecuted(IInteractable, IInteractableAction, InteractionResult)`
+
+Raises the ActionExecuted event.
+
+```csharp
+protected void RaiseActionExecuted(IInteractable target, IInteractableAction action, InteractionResult result)
+```
+
+**Parameters**
+
+| Name | Type | Description |
+|---|---|---|
+| `target` | `FireSoftworks.Interaction.IInteractable` |  |
+| `action` | `FireSoftworks.Interaction.IInteractableAction` |  |
+| `result` | `FireSoftworks.Interaction.InteractionResult` |  |
+
+### `RaiseActionSelectionChanged(IInteractable, int, IInteractableAction)`
+
+Raises the ActionSelectionChanged event.
+
+```csharp
+protected void RaiseActionSelectionChanged(IInteractable target, int index, IInteractableAction action)
+```
+
+**Parameters**
+
+| Name | Type | Description |
+|---|---|---|
+| `target` | `FireSoftworks.Interaction.IInteractable` |  |
+| `index` | `System.Int32` |  |
+| `action` | `FireSoftworks.Interaction.IInteractableAction` |  |
+
+### `RaiseActionsDiscovered(IInteractable, IReadOnlyList<IInteractableAction>, InteractionContext)`
+
+Raises the ActionsDiscovered event.
+
+```csharp
+protected void RaiseActionsDiscovered(IInteractable target, IReadOnlyList<IInteractableAction> actions, InteractionContext context)
+```
+
+**Parameters**
+
+| Name | Type | Description |
+|---|---|---|
+| `target` | `FireSoftworks.Interaction.IInteractable` |  |
+| `actions` | `System.Collections.Generic.IReadOnlyList{FireSoftworks.Interaction.IInteractableAction}` |  |
+| `context` | `FireSoftworks.Interaction.InteractionContext` |  |
+
+### `RaiseInteractionEnded(IInteractable)`
+
+Raises the InteractionEnded event.
+
+```csharp
+protected void RaiseInteractionEnded(IInteractable target)
+```
+
+**Parameters**
+
+| Name | Type | Description |
+|---|---|---|
+| `target` | `FireSoftworks.Interaction.IInteractable` |  |
+
+### `RaiseInteractionStarted(IInteractable)`
+
+Raises the InteractionStarted event.
+
+```csharp
+protected void RaiseInteractionStarted(IInteractable target)
+```
+
+**Parameters**
+
+| Name | Type | Description |
+|---|---|---|
+| `target` | `FireSoftworks.Interaction.IInteractable` |  |
+
+### `RaiseShowActionsDiscovered(IInteractable, IReadOnlyList<IInteractableAction>, InteractionContext)`
+
+Raises the ShowActionsDiscovered event.
+
+```csharp
+protected void RaiseShowActionsDiscovered(IInteractable target, IReadOnlyList<IInteractableAction> actions, InteractionContext context)
+```
+
+**Parameters**
+
+| Name | Type | Description |
+|---|---|---|
+| `target` | `FireSoftworks.Interaction.IInteractable` |  |
+| `actions` | `System.Collections.Generic.IReadOnlyList{FireSoftworks.Interaction.IInteractableAction}` |  |
+| `context` | `FireSoftworks.Interaction.InteractionContext` |  |
+
+### `SelectAction(int)`
+
+Selects a specific action by index.
+
+```csharp
+public IInteractableAction SelectAction(int actionIndex)
+```
+
+**Parameters**
+
+| Name | Type | Description |
+|---|---|---|
+| `actionIndex` | `System.Int32` |  |
+
+### `SelectNextAction()`
+
+Cycles to the next available action.
+
+```csharp
+public IInteractableAction SelectNextAction()
+```
+
+### `SelectPreviousAction()`
+
+Cycles to the previous available action.
+
+```csharp
+public IInteractableAction SelectPreviousAction()
+```
+
+### `ShowInteractions()`
+
+Enters interaction mode and shows the available actions.
+
+```csharp
+public virtual void ShowInteractions()
+```
+
+## Propertys
+
+### `SelectedAction`
+
+Gets the currently selected action, or null if none is selected.
+
+```csharp
+public IInteractableAction SelectedAction { get; }
+```
+
+### `isInteractionAvailable`
+
+Indicates whether there is a currently focused interactable target.
+
+```csharp
+public bool isInteractionAvailable { get; }
+```
+
+### `isValidInteractionSelected`
+
+Indicates whether there is a valid selected action that can be executed.
+
+```csharp
+public bool isValidInteractionSelected { get; }
+```
+
+## Fields
+
+### `currentActions`
+
+```csharp
+protected List<IInteractableAction> currentActions
+```
+
+### `currentContext`
+
+```csharp
+protected InteractionContext currentContext
+```
+
+### `currentTarget`
+
+```csharp
+protected IInteractable currentTarget
+```
+
+### `interactToShowActions`
+
+If true, the first interaction input will show the available actions without executing.
+
+```csharp
+[Tooltip("If true, the first interaction input will show actions. Subsequent input executes.")]
+public bool interactToShowActions
+```
+
+### `isInteractionModeEnabled`
+
+```csharp
+protected bool isInteractionModeEnabled
+```
+
+### `selectedActionIndex`
+
+```csharp
+protected int selectedActionIndex
+```
+
+### `showUnavailableActions`
+
+```csharp
+[Header("Interaction Settings")]
+[Tooltip("Show unavailable actions in the UI (grayed out). Can be overridden per-action.")]
+public bool showUnavailableActions
+```
+

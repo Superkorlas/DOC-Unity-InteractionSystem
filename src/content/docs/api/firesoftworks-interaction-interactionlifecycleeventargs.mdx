@@ -1,0 +1,44 @@
+---
+title: "InteractionLifecycleEventArgs"
+description: "Event arguments for interaction lifecycle events (start/end).
+Passed when the player begins or ends focusing on an interactable object."
+sidebar:
+  label: "InteractionLifecycleEventArgs"
+---
+
+**Namespace:** `FireSoftworks.Interaction`  
+**Type:** Class  
+
+Event arguments for interaction lifecycle events (start/end).
+Passed when the player begins or ends focusing on an interactable object.
+
+```csharp
+public class InteractionLifecycleEventArgs
+```
+
+## Constructors
+
+### `InteractionLifecycleEventArgs(IInteractable)`
+
+Creates a new InteractionLifecycleEventArgs with the given target.
+
+```csharp
+public InteractionLifecycleEventArgs(IInteractable target)
+```
+
+**Parameters**
+
+| Name | Type | Description |
+|---|---|---|
+| `target` | `FireSoftworks.Interaction.IInteractable` | The interactable target. |
+
+## Fields
+
+### `Target`
+
+The interactable target involved in this lifecycle event.
+
+```csharp
+public readonly IInteractable Target
+```
+

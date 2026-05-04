@@ -99,7 +99,7 @@ function renderItem(item, allItems) {
   }
 
   // Children (methods, properties, events)
-  const children = item.children ?? [];
+  const children = Array.isArray(item.children) ? item.children : [];
   const childItems = children
     .map(uid => allItems.find(i => i.uid === uid))
     .filter(Boolean);
@@ -127,7 +127,7 @@ function renderItem(item, allItems) {
           lines.push('');
         }
         // Parameters
-        const params = child.syntax?.parameters ?? [];
+        const params = Array.isArray(child.syntax?.parameters) ? child.syntax.parameters : [];
         if (params.length > 0) {
           lines.push('**Parameters**');
           lines.push('');
@@ -166,23 +166,16 @@ async function main() {
     return;
   }
 
-  // Collect ALL items across all YAML files for cross-linking
+  // 1. Gather ALL items for cross-reference
   const allItems = [];
-  const fileContents = {};
+  const parsedFiles = new Map();
+
   for (const file of ymlFiles) {
     const raw = fs.readFileSync(path.join(META_DIR, file), 'utf8');
-    fileContents[file] = raw;
-    // Quick parse to gather items for lookup
-    const lines = raw.split('\n');
-    let current = null;
-    for (const line of lines) {
-      if (line.match(/^- uid:/)) {
-        current = { uid: line.replace('- uid:', '').trim() };
-        allItems.push(current);
-      } else if (current && line.match(/^\s+\w+:/)) {
-        const kv = line.match(/^\s+(\w+):\s*(.*)/);
-        if (kv) current[kv[1]] = kv[2].trim();
-      }
+    const data = await parseDocFxYaml(raw);
+    if (data?.items) {
+      allItems.push(...data.items);
+      parsedFiles.set(file, data);
     }
   }
 
@@ -190,34 +183,19 @@ async function main() {
   fs.mkdirSync(OUTPUT_DIR, { recursive: true });
 
   let generated = 0;
-  for (const file of ymlFiles) {
-    const raw = fileContents[file];
+  for (const [file, data] of parsedFiles) {
     // Skip if not a ManagedReference YAML
+    const raw = fs.readFileSync(path.join(META_DIR, file), 'utf8');
     if (!raw.includes('YamlMime:ManagedReference')) continue;
 
-    // Parse items
-    const items = [];
-    const lines = raw.split('\n');
-    let current = null;
-    for (const line of lines) {
-      if (line.startsWith('- uid:')) {
-        if (current) items.push(current);
-        current = { uid: line.replace('- uid:', '').trim() };
-      } else if (current) {
-        const kv = line.match(/^\s{2}(\w[\w.]*)\s*:\s*(.*)/);
-        if (kv) current[kv[1]] = kv[2].trim();
-      }
-    }
-    if (current) items.push(current);
-
-    // The first item in the file is usually the type itself
+    const items = data.items || [];
     const primary = items[0];
-    if (!primary?.uid) continue;
+    if (!primary?.uid || primary.type === 'Namespace') continue; // Namespaces handled differently or skipped
 
     const title = primary.name ?? primary.uid;
-    const description = stripHtml(primary.summary ?? `${primary.type ?? 'Type'} in FireSoftworks.Interaction`);
+    const description = stripHtml(primary.summary ?? `${primary.type ?? 'Type'} documentation`);
     const slug = uidToSlug(primary.uid);
-    const body = renderItem(primary, items);
+    const body = renderItem(primary, allItems); // Use allItems for cross-file children lookup if needed
 
     const mdx = `---
 title: "${title.replace(/"/g, '\\"')}"

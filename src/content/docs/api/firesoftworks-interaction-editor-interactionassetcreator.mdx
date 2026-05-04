@@ -1,0 +1,41 @@
+---
+title: "InteractionAssetCreator"
+description: "Editor utilities for creating Interaction System assets."
+sidebar:
+  label: "InteractionAssetCreator"
+---
+
+**Namespace:** `FireSoftworks.Interaction.Editor`  
+**Type:** Class  
+
+Editor utilities for creating Interaction System assets.
+
+```csharp
+public static class InteractionAssetCreator
+```
+
+## Methods
+
+### `CreateAsset<T>(string)`
+
+Generic method to create ScriptableObject assets with proper naming and location.
+
+```csharp
+public static void CreateAsset<T>(string defaultName) where T : ScriptableObject
+```
+
+**Parameters**
+
+| Name | Type | Description |
+|---|---|---|
+| `defaultName` | `System.String` |  |
+
+### `CreateInteractableActionSO()`
+
+Creates a new InteractableActionSO ScriptableObject asset in the current directory.
+
+```csharp
+[MenuItem("Assets/Create/FireSoftworks/Interaction/SO Actions/Interactable Action SO")]
+public static void CreateInteractableActionSO()
+```
+
