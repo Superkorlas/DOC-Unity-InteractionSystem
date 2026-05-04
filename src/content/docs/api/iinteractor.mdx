@@ -1,0 +1,174 @@
+---
+title: IInteractor
+description: Core interface defining the contract for all interactors — detection, action selection, and execution.
+sidebar:
+  label: IInteractor
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+**Namespace:** `FireSoftworks.Interaction`  
+**Type:** Interface  
+**Assembly:** `FireSofworks.InteractionSystem`
+
+Interface defining the core functionality of an interactor. Interactors are responsible for detecting interactable targets and managing the selection and execution of actions on those targets.
+
+```csharp
+public interface IInteractor
+```
+
+<Aside type="tip">
+Use [`InteractorBase`](/Unity-InteractionSystem/api/interactorbase/) as your starting point when implementing a custom interactor — it provides the full action management and event pipeline. Only implement `IInteractor` directly if you need a completely custom architecture.
+</Aside>
+
+---
+
+## Properties
+
+### `isInteractionAvailable`
+
+```csharp
+bool isInteractionAvailable { get; }
+```
+
+Indicates whether there is a currently focused interactable target. Returns `true` when `currentTarget != null`.
+
+---
+
+### `isValidInteractionSelected`
+
+```csharp
+bool isValidInteractionSelected { get; }
+```
+
+Indicates whether there is a valid selected action that can be executed. Returns `true` when a target is focused and a valid action index is selected.
+
+---
+
+### `SelectedAction`
+
+```csharp
+IInteractableAction SelectedAction { get; }
+```
+
+Gets the currently selected action, or `null` if none is selected.
+
+---
+
+## Methods
+
+### `IsInteracting()`
+
+```csharp
+bool IsInteracting()
+```
+
+Returns `true` if the interactor is currently in interaction mode or has a valid target and selected action.
+
+---
+
+### `HandleInteraction()`
+
+```csharp
+void HandleInteraction()
+```
+
+Main entry point for input code. Depending on the `interactToShowActions` setting: either enters "show actions" mode on first press, or executes the currently selected action.
+
+**Typical usage:**
+```csharp
+void Update()
+{
+    if (Input.GetKeyDown(KeyCode.E))
+        interactor.HandleInteraction();
+}
+```
+
+---
+
+### `ShowInteractions()`
+
+```csharp
+void ShowInteractions()
+```
+
+Enters interaction mode explicitly and fires `ShowActionsDiscovered`. Use when you want to separate "open the action menu" from "execute an action".
+
+---
+
+### `ExecuteInteraction()`
+
+```csharp
+void ExecuteInteraction()
+```
+
+Executes the currently selected action. Does nothing if no valid action is selected. Fires `ActionExecuted` on success and calls `EndInteraction()`.
+
+---
+
+### `SelectNextAction()`
+
+```csharp
+IInteractableAction SelectNextAction()
+```
+
+Cycles forward through available actions. Skips unavailable ones. Returns the newly selected action, or `null` if none is available.
+
+---
+
+### `SelectPreviousAction()`
+
+```csharp
+IInteractableAction SelectPreviousAction()
+```
+
+Cycles backward through available actions. Returns the newly selected action, or `null`.
+
+---
+
+### `SelectAction(int)`
+
+```csharp
+IInteractableAction SelectAction(int actionIndex)
+```
+
+Selects a specific action by index. Fires `ActionSelectionChanged`.
+
+| Parameter | Type | Description |
+|---|---|---|
+| `actionIndex` | `int` | Index into the current visible actions list. |
+
+---
+
+### `EndInteraction()`
+
+```csharp
+void EndInteraction()
+```
+
+Cancels the current interaction, clears the target, and fires `InteractionEnded`.
+
+---
+
+### `GetVisibleActions()`
+
+```csharp
+List<IInteractableAction> GetVisibleActions()
+```
+
+Returns the list of actions that should be visible in the UI, respecting the `ShowWhenUnavailable` flag on each action. Used by HUD components to populate the action menu.
+
+---
+
+## Events
+
+| Event | Args type | Fires when |
+|---|---|---|
+| `ActionsDiscovered` | `ActionsDiscoveredEventArgs` | A new target is focused and actions are built |
+| `ShowActionsDiscovered` | `ActionsDiscoveredEventArgs` | The action menu should be displayed |
+| `ActionSelectionChanged` | `ActionSelectionChangedEventArgs` | The selected action index changes |
+| `ActionExecuted` | `ActionExecutedEventArgs` | An action completes execution |
+| `InteractionStarted` | `InteractionLifecycleEventArgs` | A target is first focused |
+| `InteractionEnded` | `InteractionLifecycleEventArgs` | Focus is lost |
+
+See the [Event System guide](/Unity-InteractionSystem/guides/events/) for subscription examples.

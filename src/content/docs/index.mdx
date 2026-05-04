@@ -1,0 +1,61 @@
+---
+title: Interaction System
+description: Modular, raycast-based interaction system for Unity 6 — camera-agnostic and input-agnostic.
+template: splash
+hero:
+  tagline: A plug-and-play interaction framework for Unity 6. Drop it in, wire up events, ship.
+  actions:
+    - text: Quick Start
+      link: /Unity-InteractionSystem/quick-start/
+      icon: right-arrow
+      variant: primary
+    - text: API Reference
+      link: /Unity-InteractionSystem/api/
+      icon: open-book
+---
+
+import { Card, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+## What is it?
+
+The **Interaction System** is a Unity UPM package that gives your game a clean, extensible layer for player ↔ world interactions. It is built around three core ideas:
+
+- **Camera-agnostic** — works with any camera setup; you provide the camera, the system handles the raycast.
+- **Input-agnostic** — you call `HandleInteraction()` from your input code; no hard dependency on any input system.
+- **Action-driven** — every interactable object exposes one or more `IInteractableAction` implementations, which you can mix freely in three styles.
+
+---
+
+<CardGrid stagger>
+  <Card title="Three action styles" icon="puzzle">
+    Choose **Component-based** (per-object state), **ScriptableObject-based** (shared/reusable logic), or **Hybrid Wrapper** (SO logic + per-instance state). All three are discovered and sorted transparently.
+  </Card>
+  <Card title="Rich event system" icon="seti:code-search">
+    C# events and serializable UnityEvents for every lifecycle point: focus enter/exit, actions discovered, selection changed, action executed. Wire up UI and audio without a single hard dependency.
+  </Card>
+  <Card title="Inspector-friendly" icon="setting">
+    `[SerializeField]` fields, `[RequireComponent]` guards, editor menu helpers (`Create > FireSoftworks > Interaction`) and ScriptableObject configuration out of the box.
+  </Card>
+  <Card title="No external dependencies" icon="approve-check-circle">
+    Zero coupling to inventory, UI, or physics systems. Drop it into any project and integrate at the event layer.
+  </Card>
+</CardGrid>
+
+---
+
+## Package info
+
+| Property | Value |
+|---|---|
+| Package name | `com.firesoftworks.interaction.system` |
+| Unity version | 6000.0+ |
+| Namespace | `FireSoftworks.Interaction` |
+| License | See `LICENSE.md` |
+
+---
+
+<LinkCard
+  title="Get started in 5 minutes →"
+  description="Set up a working interactable object from scratch."
+  href="/Unity-InteractionSystem/quick-start/"
+/>

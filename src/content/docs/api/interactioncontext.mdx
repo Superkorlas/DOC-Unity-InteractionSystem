@@ -1,0 +1,106 @@
+---
+title: InteractionContext
+description: Immutable data structure passed through the entire interaction pipeline containing all contextual information.
+sidebar:
+  label: InteractionContext
+---
+
+**Namespace:** `FireSoftworks.Interaction`  
+**Type:** `readonly struct`  
+**Assembly:** `FireSofworks.InteractionSystem`
+
+Immutable context object passed to `OnFocusEnter`, `IsAvailable`, and `Execute` throughout the interaction pipeline. Contains references to both sides of the interaction and optional raycast data.
+
+```csharp
+public readonly struct InteractionContext
+```
+
+Being a `readonly struct`, `InteractionContext` is stack-allocated and zero-allocation when passed by value.
+
+---
+
+## Constructor
+
+```csharp
+public InteractionContext(
+    GameObject interactable,
+    Transform  interactableTransform,
+    GameObject interactor,
+    Transform  interactorTransform,
+    RaycastHit? hit,
+    float      maxDistance)
+```
+
+Typically constructed inside `RaycastInteractor.DetectInteractable()` when a new target is focused.
+
+---
+
+## Properties
+
+### `Interactable`
+
+```csharp
+public readonly GameObject Interactable;
+```
+
+The `GameObject` being interacted with (the object carrying `InteractableTarget`).
+
+---
+
+### `InteractableTransform`
+
+```csharp
+public readonly Transform InteractableTransform;
+```
+
+Shortcut to the interactable's `Transform` for position / rotation queries without an extra `GetComponent`.
+
+---
+
+### `Interactor`
+
+```csharp
+public readonly GameObject Interactor;
+```
+
+The `GameObject` performing the interaction (typically the Player).
+
+---
+
+### `InteractorTransform`
+
+```csharp
+public readonly Transform InteractorTransform;
+```
+
+Shortcut to the interactor's `Transform`.
+
+---
+
+### `Hit`
+
+```csharp
+public readonly RaycastHit? Hit;
+```
+
+The raycast hit information from `RaycastInteractor`. `null` when the interaction was triggered programmatically (e.g., proximity trigger or click).
+
+---
+
+### `MaxDistance`
+
+```csharp
+public readonly float MaxDistance;
+```
+
+The `interactionRange` value from the interactor at the time of detection. Useful for proximity-based availability checks:
+
+```csharp
+public override bool IsAvailable(InteractionContext ctx)
+{
+    float dist = Vector3.Distance(
+        ctx.InteractorTransform.position,
+        ctx.InteractableTransform.position);
+    return dist <= ctx.MaxDistance * 0.5f; // only available when very close
+}
+```

@@ -1,0 +1,84 @@
+---
+title: RaycastInteractor
+description: Default IInteractor implementation using 3D Physics raycasting to detect interactable objects.
+sidebar:
+  label: RaycastInteractor
+---
+
+**Namespace:** `FireSoftworks.Interaction`  
+**Type:** Class · MonoBehaviour  
+**Assembly:** `FireSofworks.InteractionSystem`  
+**Inherits:** [`InteractorBase`](/Unity-InteractionSystem/api/interactorbase/)  
+**Menu path:** `FireSoftworks/Interaction/Raycast Interactor`
+
+Concrete interactor that detects interactable objects by casting a ray from the assigned camera. Suitable for first-person and third-person 3D games.
+
+```csharp
+[AddComponentMenu("FireSoftworks/Interaction/Raycast Interactor")]
+[DefaultExecutionOrder(-10)]
+public class RaycastInteractor : InteractorBase
+```
+
+---
+
+## Setup
+
+1. Add `RaycastInteractor` to the **Player** GameObject.
+2. Assign **Player Camera** to your scene camera.
+3. Set **Interaction Range** (default 6 m) and **Interactable Mask** to a layer that contains `InteractableTarget` objects.
+4. Call `HandleInteraction()` from your input code on the desired key/button.
+
+---
+
+## Inspector fields
+
+| Field | Type | Default | Description |
+|---|---|---|---|
+| `interactionRange` | `float` | `6` | Max raycast distance in world units. |
+| `interactableMask` | `LayerMask` | — | Only objects on these layers are considered. |
+| `playerCamera` | `Camera` | — | Camera used as raycast origin and direction. **Required.** |
+
+---
+
+## Methods
+
+### `DetectInteractable()` *(protected virtual)*
+
+```csharp
+protected virtual void DetectInteractable()
+```
+
+Called every `Update()`. Casts a ray from `playerCamera.transform.position` in the camera's forward direction. On hit:
+
+- Builds a new `InteractionContext` with the hit data.
+- If the target changed: calls `ClearCurrentTarget()`, sets `currentTarget`, calls `target.OnFocusEnter()`, caches actions, and fires `ActionsDiscovered` or `ShowActionsDiscovered` depending on `interactToShowActions`.
+
+If no interactable is hit, calls `ClearCurrentTarget()`.
+
+Override `DetectInteractable()` to customise the raycast behaviour (e.g., use `SphereCast`, adjust origin) without replacing the full class.
+
+---
+
+## Overriding detection
+
+```csharp
+public class WideRaycastInteractor : RaycastInteractor
+{
+    [SerializeField] private float sphereRadius = 0.3f;
+
+    protected override void DetectInteractable()
+    {
+        if (playerCamera == null) return;
+
+        Ray ray = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
+        if (Physics.SphereCast(ray, sphereRadius, out RaycastHit hit, interactionRange, interactableMask))
+        {
+            // same logic as base but with sphere cast
+        }
+        else
+        {
+            EndInteraction();
+        }
+    }
+}
+```

@@ -1,0 +1,102 @@
+---
+title: InteractableAction
+description: Abstract MonoBehaviour base for component-based interaction actions with serialized Inspector fields.
+sidebar:
+  label: InteractableAction
+---
+
+**Namespace:** `FireSoftworks.Interaction`  
+**Type:** Abstract class · MonoBehaviour  
+**Assembly:** `FireSofworks.InteractionSystem`  
+**Implements:** `IInteractableAction`  
+**Requires:** `[RequireComponent(typeof(InteractableTarget))]`
+
+Abstract MonoBehaviour base for component-based actions. Provides `[SerializeField]` fields for `Id`, `Label`, `Icon`, and `OnExecuted`, so subclasses only need to override `IsAvailable()` and `Execute()`.
+
+```csharp
+[RequireComponent(typeof(InteractableTarget))]
+public class InteractableAction : MonoBehaviour, IInteractableAction
+```
+
+---
+
+## Subclassing
+
+```csharp
+public class OpenDoorAction : InteractableAction
+{
+    [SerializeField] private Animator _doorAnimator;
+
+    private bool _isOpen;
+
+    public override bool IsAvailable(InteractionContext context) => !_isOpen;
+
+    public override void Execute(InteractionContext context)
+    {
+        _isOpen = true;
+        _doorAnimator.SetTrigger("Open");
+        OnExecuted?.Invoke(context); // fires Inspector-wired callbacks
+    }
+}
+```
+
+---
+
+## Inspector fields
+
+| Field | Type | Description |
+|---|---|---|
+| `id` | `string` | Technical identifier for sorting and programmatic lookup. |
+| `displayName` | `string` | Human-readable label shown in the HUD. |
+| `icon` | `Sprite` | Optional HUD icon. |
+| `onExecuted` | `UnityEvent<InteractionContext>` | Callbacks fired after `Execute()`. |
+
+---
+
+## Properties
+
+### `Id`
+```csharp
+public string Id { get; }
+```
+Returns the serialized `id` field.
+
+### `Label`
+```csharp
+public string Label { get; }
+```
+Returns the serialized `displayName` field.
+
+### `Icon`
+```csharp
+public Sprite Icon { get; }
+```
+Returns the serialized `icon` field. `null` if unassigned.
+
+### `ShowWhenUnavailable`
+```csharp
+public virtual bool ShowWhenUnavailable { get; }
+```
+Returns `true` by default. Override to hide this action from the HUD when unavailable.
+
+### `OnExecuted`
+```csharp
+public UnityEvent<InteractionContext> OnExecuted { get; }
+```
+The serialized UnityEvent. Invoke it at the end of your `Execute()` override.
+
+---
+
+## Virtual methods
+
+### `IsAvailable(InteractionContext)`
+```csharp
+public virtual bool IsAvailable(InteractionContext context)
+```
+Default: returns `this.enabled`. Override to add custom availability conditions.
+
+### `Execute(InteractionContext)`
+```csharp
+public virtual void Execute(InteractionContext context)
+```
+Default: invokes `OnExecuted`. Override with your specific action logic and call `OnExecuted?.Invoke(context)` at the end.

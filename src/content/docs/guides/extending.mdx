@@ -1,0 +1,140 @@
+---
+title: Extending the System
+description: Create custom interactors, override detection logic, and integrate with other game systems.
+---
+
+import { Steps, Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+
+The Interaction System is built around interfaces and abstract base classes so every piece is replaceable. This guide covers the most common extension points.
+
+---
+
+## Custom interactors
+
+`RaycastInteractor` (the built-in implementation) uses a 3D raycast for detection. If your game needs a different detection strategy — 2D, VR, proximity trigger, click-to-interact — inherit from `InteractorBase` instead.
+
+`InteractorBase` handles all action management, selection, and event broadcasting. You only need to implement detection and focus management.
+
+```csharp
+using FireSoftworks.Interaction;
+using UnityEngine;
+
+/// <summary>
+/// Detects interactables using a Physics trigger volume instead of a raycast.
+/// Attach to the Player along with a collider set to <c>Is Trigger</c>.
+/// </summary>
+[RequireComponent(typeof(Collider))]
+public class ProximityInteractor : InteractorBase
+{
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.TryGetComponent<IInteractable>(out var target))
+        {
+            currentTarget = target;
+            var context = new InteractionContext(this);
+            target.OnFocusEnter(context);
+            RaiseInteractionStarted(target);
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.TryGetComponent<IInteractable>(out var target)
+            && currentTarget == target)
+        {
+            EndInteraction();
+        }
+    }
+}
+```
+
+<Aside type="note">
+`InteractorBase` does **not** force a `Detect()` method. This is intentional: polling-based (raycast), event-based (trigger), and input-based (click) detectors each have different optimal lifecycles. Use whichever Unity callbacks fit your strategy.
+</Aside>
+
+---
+
+## Focus management methods
+
+| Method | When to call |
+|---|---|
+| `RaiseInteractionStarted(target)` | After setting `currentTarget` and calling `target.OnFocusEnter()`. |
+| `EndInteraction()` | When the player loses sight of or moves away from the target. Fires `InteractionEnded` and clears state. |
+
+---
+
+## Custom action execution flow
+
+Override `HandleInteraction()` in your interactor to change the two-phase flow (show actions → execute selected):
+
+```csharp
+public override void HandleInteraction()
+{
+    if (!isInteractionAvailable) return;
+
+    // Single-press = execute immediately (skip the "show actions" phase)
+    ExecuteInteraction();
+}
+```
+
+---
+
+## Implementing `IInteractable` directly
+
+`InteractableTarget` is the default implementation of `IInteractable`. If you need full control (e.g., a procedurally generated object, a networked entity), implement `IInteractable` directly:
+
+```csharp
+public class NetworkedChest : MonoBehaviour, IInteractable
+{
+    public GameObject GetGameObject() => gameObject;
+
+    public List<IInteractableAction> GetAllActions() => _actions;
+
+    public List<IInteractableAction> GetAvailableActions(InteractionContext ctx)
+        => _actions.Where(a => a.IsAvailable(ctx)).ToList();
+
+    public void OnFocusEnter(InteractionContext ctx) { /* highlight */ }
+    public void OnFocusExit() { /* remove highlight */ }
+
+    private readonly List<IInteractableAction> _actions = new();
+}
+```
+
+---
+
+## Integrating with a UI system
+
+Subscribe to `IInteractor` events from any MonoBehaviour:
+
+```csharp
+void OnEnable()
+{
+    _interactor.ActionsDiscovered    += OnActionsDiscovered;
+    _interactor.ActionSelectionChanged += OnSelectionChanged;
+    _interactor.ActionExecuted       += OnActionExecuted;
+    _interactor.InteractionEnded     += OnInteractionEnded;
+}
+
+void OnDisable()
+{
+    _interactor.ActionsDiscovered    -= OnActionsDiscovered;
+    _interactor.ActionSelectionChanged -= OnSelectionChanged;
+    _interactor.ActionExecuted       -= OnActionExecuted;
+    _interactor.InteractionEnded     -= OnInteractionEnded;
+}
+
+private void OnActionsDiscovered(ActionsDiscoveredEventArgs args)
+{
+    _hudPanel.Populate(args.Actions);
+}
+```
+
+The built-in `InteractionHUD` sample (`Samples~/Demo/BasicUI/InteractionHUD/`) is a complete reference for this pattern using Unity UI Toolkit.
+
+---
+
+## Performance tips
+
+- **Layer masks**: Configure `RaycastInteractor.InteractionLayerMask` to only hit objects that have `InteractableTarget`. This reduces Physics CPU time significantly in dense scenes.
+- **Cache `GetComponents`**: `InteractableTarget` calls `GetComponents<IInteractableAction>()` when actions are first requested. For objects that never change their component set, call `GetAllActions()` once and cache the result yourself.
+- **Avoid allocations in `IsAvailable`**: `GetAvailableActions` is called every frame while focused. Keep `IsAvailable` allocation-free (no LINQ, no `new List`).

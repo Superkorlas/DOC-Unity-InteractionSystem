@@ -1,0 +1,90 @@
+---
+title: InteractableActionSOWrapper
+description: MonoBehaviour wrapper that combines a shared InteractableActionSO with per-instance state.
+sidebar:
+  label: InteractableActionSOWrapper
+---
+
+**Namespace:** `FireSoftworks.Interaction`  
+**Type:** Class · MonoBehaviour  
+**Assembly:** `FireSofworks.InteractionSystem`  
+**Inherits:** [`InteractableAction`](/Unity-InteractionSystem/api/interactableaction/)
+
+Hybrid base class that delegates `IsAvailable` and `Execute` to an assigned `InteractableActionSO` while keeping per-instance state in the MonoBehaviour. Solves the "single-use SO" problem.
+
+```csharp
+public class InteractableActionSOWrapper : InteractableAction
+```
+
+---
+
+## How it works
+
+On `Awake()`, the wrapper copies `Id`, `Label`, and `Icon` from the assigned SO into the base `InteractableAction` fields (only if those fields are empty in the Inspector), so the action is discoverable by `InteractableTarget` with the correct metadata.
+
+`IsAvailable()` delegates to `actionSO.IsAvailable()`. `Execute()` delegates to `actionSO.Execute()`.
+
+---
+
+## Creating a wrapper
+
+```csharp
+public class SingleUseActionSOWrapper : InteractableActionSOWrapper
+{
+    private bool _used;
+
+    // Add per-instance state check before delegating to SO
+    public override bool IsAvailable(InteractionContext context)
+        => !_used && base.IsAvailable(context);
+
+    public override void Execute(InteractionContext context)
+    {
+        _used = true;
+        base.Execute(context); // delegates to actionSO.Execute()
+    }
+}
+```
+
+Attach `SingleUseActionSOWrapper` to a chest, assign the shared loot SO asset — each chest independently tracks `_used`.
+
+---
+
+## Inspector fields
+
+| Field | Type | Description |
+|---|---|---|
+| `actionSO` | `InteractableActionSO` | The shared SO providing logic and display data. **Required.** |
+
+(Inherits `id`, `displayName`, `icon`, `onExecuted` from `InteractableAction` — set them to override SO defaults per-instance.)
+
+---
+
+## Methods
+
+### `IsAvailable(InteractionContext)` *(override)*
+
+```csharp
+public override bool IsAvailable(InteractionContext context)
+```
+
+Returns `actionSO != null && actionSO.IsAvailable(context)`. Override in subclasses to add per-instance checks before or after the SO check.
+
+---
+
+### `Execute(InteractionContext)` *(override)*
+
+```csharp
+public override void Execute(InteractionContext context)
+```
+
+Calls `actionSO.Execute(context)`. Logs a warning if no SO is assigned. Override in subclasses to add per-instance side effects.
+
+---
+
+### `Awake()` *(protected virtual)*
+
+```csharp
+protected virtual void Awake()
+```
+
+Copies `Id`, `Label`, and `Icon` from `actionSO` into the base fields via reflection, only for fields left blank in the Inspector. Override for custom initialization.

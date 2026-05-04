@@ -1,0 +1,73 @@
+---
+title: ActionExecutedEventArgs
+description: Event arguments passed when an interaction action is executed, containing the target, action, and result.
+sidebar:
+  label: ActionExecutedEventArgs
+---
+
+**Namespace:** `FireSoftworks.Interaction`  
+**Type:** Class  
+**Assembly:** `FireSofworks.InteractionSystem`
+
+Payload for the `IInteractor.ActionExecuted` C# event and the `onActionExecuted` UnityEvent. Fired after an action completes execution.
+
+```csharp
+public class ActionExecutedEventArgs
+```
+
+---
+
+## Constructor
+
+```csharp
+public ActionExecutedEventArgs(
+    IInteractable       target,
+    IInteractableAction action,
+    InteractionResult   result)
+```
+
+---
+
+## Fields
+
+### `Target`
+
+```csharp
+public readonly IInteractable Target;
+```
+
+The interactable object that was targeted.
+
+---
+
+### `Action`
+
+```csharp
+public readonly IInteractableAction Action;
+```
+
+The action that was executed.
+
+---
+
+### `Result`
+
+```csharp
+public readonly InteractionResult Result;
+```
+
+The outcome of the execution. Check `Result.Success` and `Result.Message` for details.
+
+---
+
+## Usage
+
+```csharp
+interactor.ActionExecuted += (ActionExecutedEventArgs args) =>
+{
+    if (args.Result.Success)
+        audioSource.PlayOneShot(successClip);
+    else
+        Debug.LogWarning($"Action failed: {args.Result.Message}");
+};
+```

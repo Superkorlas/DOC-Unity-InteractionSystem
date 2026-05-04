@@ -1,0 +1,169 @@
+---
+title: Quick Start
+description: Set up your first interactable object in under 5 minutes.
+---
+
+import { Steps, Tabs, TabItem, Aside, Code } from '@astrojs/starlight/components';
+
+This guide walks you through creating a working interactable object from scratch.
+Pick the action style that matches your needs — all three options share the same detection and event pipeline.
+
+---
+
+## Installation
+
+import { LinkCard } from '@astrojs/starlight/components';
+
+<Tabs>
+  <TabItem label="Package Manager (local)">
+    1. Open **Window › Package Manager**.
+    2. Click **+** › **Add package from disk…**
+    3. Navigate to the package folder and select `package.json`.
+  </TabItem>
+  <TabItem label="Embedded">
+    Copy the `com.firesoftworks.interaction.system` folder into your project's `Packages/` directory. Unity picks it up automatically.
+  </TabItem>
+</Tabs>
+
+---
+
+## Option A — Component-based actions
+
+Best for objects that need their own serialized state (a door that remembers whether it is open, a chest with a unique loot table).
+
+<Steps>
+1. **Add `RaycastInteractor` to the Player.**
+
+   Set **Player Camera** to your scene camera in the Inspector.
+
+2. **Add `InteractableTarget` to any object with a Collider.**
+
+3. **Add an action component to the same object.**
+
+   For example, add the sample `ConsumeAction` from `Samples~/Demo/InteractionActions/Scripts/`.
+
+4. **Call `HandleInteraction()` from your input code.**
+
+   ```csharp
+   // PlayerInputHandler.cs (your code, not the package)
+   void Update()
+   {
+       if (Input.GetKeyDown(KeyCode.E))
+           interactor.HandleInteraction();
+   }
+   ```
+
+5. **Subscribe to events** for UI feedback (optional but recommended).
+
+   ```csharp
+   interactor.ActionsDiscovered += args =>
+       Debug.Log($"Focused on: {args.Target.GetGameObject().name}");
+
+   interactor.ActionExecuted += args =>
+       Debug.Log($"Executed: {args.Action.Label}");
+   ```
+</Steps>
+
+---
+
+## Option B — ScriptableObject actions
+
+Best for shared, data-driven behaviours used across many interactables (a generic "Inspect" text, a stateless pickup template).
+
+<Steps>
+1. **Create an SO action asset.**
+
+   Right-click in the Project window and choose  
+   **Create › FireSoftworks › Interaction › [Action Name] Action SO**.
+
+2. **Add `InteractableTarget` to any object.**
+
+3. **Assign the SO asset** to the **SO Actions** list in the `InteractableTarget` Inspector.
+
+4. **Add `RaycastInteractor` to the Player** (same as Option A, step 1).
+</Steps>
+
+---
+
+## Option C — Hybrid Wrapper (SO logic + per-instance state)
+
+Best when you want a reusable SO but each object needs its own state (e.g., a single-use item where each instance tracks whether it has been used).
+
+<Steps>
+1. **Create an SO action asset** (same as Option B, step 1).
+
+2. **Add a wrapper component** to the object (e.g., `SingleUseActionSOWrapper`).
+
+3. **Assign the SO asset** to the wrapper's **Action SO** field in the Inspector.
+
+4. The wrapper delegates `IsAvailable` / `Execute` to the SO and maintains a local `used` flag.
+</Steps>
+
+---
+
+## Creating a custom action
+
+<Tabs>
+  <TabItem label="Component-based">
+    ```csharp
+    using FireSoftworks.Interaction;
+    using UnityEngine;
+
+    public class MyAction : InteractableAction
+    {
+        public override bool IsAvailable(InteractionContext context)
+        {
+            // Return true when the action can be executed
+            return true;
+        }
+
+        public override void Execute(InteractionContext context)
+        {
+            Debug.Log("My action executed!");
+            OnExecuted?.Invoke(context); // fire for UI / audio callbacks
+        }
+    }
+    ```
+  </TabItem>
+  <TabItem label="ScriptableObject">
+    ```csharp
+    using FireSoftworks.Interaction;
+    using UnityEngine;
+
+    [CreateAssetMenu(
+        menuName = "FireSoftworks/Interaction/My Action SO",
+        fileName = "MyActionSO")]
+    public class MyActionSO : InteractableActionSO
+    {
+        public override bool IsAvailable(InteractionContext context) => true;
+
+        public override void Execute(InteractionContext context)
+        {
+            Debug.Log("Shared action executed!");
+            OnExecuted?.Invoke(context);
+        }
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+<Aside type="tip">
+All action types implement `IInteractableAction` and are sorted by `Id` automatically. You can have component-based and SO-based actions coexist on the same `InteractableTarget` with no extra configuration.
+</Aside>
+
+---
+
+## Next steps
+
+import { CardGrid, Card } from '@astrojs/starlight/components';
+
+<CardGrid>
+  <Card title="Action types in depth" icon="open-book">
+    Learn when to use each approach and the trade-offs involved.  
+    [Read the guide →](/Unity-InteractionSystem/guides/actions/)
+  </Card>
+  <Card title="Extending the system" icon="puzzle">
+    Create custom interactors, override detection, and integrate with other systems.  
+    [Read the guide →](/Unity-InteractionSystem/guides/extending/)
+  </Card>
+</CardGrid>

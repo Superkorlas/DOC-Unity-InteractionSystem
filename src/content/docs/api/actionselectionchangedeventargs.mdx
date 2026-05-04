@@ -1,0 +1,75 @@
+---
+title: ActionSelectionChangedEventArgs
+description: Event arguments for when the selected action index changes on an interactor.
+sidebar:
+  label: ActionSelectionChangedEventArgs
+---
+
+**Namespace:** `FireSoftworks.Interaction`  
+**Type:** Class  
+**Assembly:** `FireSofworks.InteractionSystem`
+
+Payload for the `IInteractor.ActionSelectionChanged` C# event and the `onActionSelectionChanged` UnityEvent. Fired whenever the player cycles actions or the selection is cleared.
+
+```csharp
+public class ActionSelectionChangedEventArgs
+```
+
+---
+
+## Constructor
+
+```csharp
+public ActionSelectionChangedEventArgs(
+    IInteractable       target,
+    int                 index,
+    IInteractableAction action)
+```
+
+---
+
+## Fields
+
+### `Target`
+
+```csharp
+public readonly IInteractable Target;
+```
+
+The interactable target where the selection changed.
+
+---
+
+### `Index`
+
+```csharp
+public readonly int Index;
+```
+
+The index of the newly selected action in the visible actions list. `-1` means no action is currently selected (e.g., all actions became unavailable).
+
+---
+
+### `Action`
+
+```csharp
+public readonly IInteractableAction Action;
+```
+
+The newly selected action. `null` when `Index == -1`.
+
+---
+
+## Usage
+
+```csharp
+interactor.ActionSelectionChanged += (ActionSelectionChangedEventArgs args) =>
+{
+    if (args.Action != null)
+    {
+        actionLabel.text = args.Action.Label;
+        actionIcon.sprite = args.Action.Icon;
+    }
+    hud.SetActiveIndex(args.Index);
+};
+```
