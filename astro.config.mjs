@@ -29,10 +29,6 @@ export default defineConfig({
       description:
         'Modular, raycast-based interaction system for Unity — camera-agnostic and input-agnostic.',
 
-      social: {
-        github: 'https://github.com/Superkorlas/Unity-InteractionSystem',
-      },
-
       sidebar: [
         {
           label: 'Getting Started',
@@ -70,14 +66,6 @@ export default defineConfig({
       // Local CSS loaded *after* Starlight's built-in styles — overrides palette
       customCss: ['./src/styles/custom.css'],
 
-      // Enable last-updated timestamps from git
-      lastUpdated: true,
-
-      // Edit links pointing to this docs repo
-      editLink: {
-        baseUrl:
-          'https://github.com/Superkorlas/DOC-Unity-InteractionSystem/edit/master/src/content/docs/',
-      },
     }),
   ],
 });
