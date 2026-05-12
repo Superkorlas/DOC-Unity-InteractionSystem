@@ -59,6 +59,11 @@ function stripHtml(str = '') {
   return str.replace(/<[^>]+>/g, '').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&').trim();
 }
 
+/** Escape curly braces so MDX doesn't treat them as JSX expressions. */
+function escapeMdx(str = '') {
+  return str.replace(/\{/g, '\\{').replace(/\}/g, '\\}');
+}
+
 /** Convert a DocFX uid to a URL-friendly slug. */
 function uidToSlug(uid = '') {
   return uid
@@ -86,7 +91,7 @@ function renderItem(item, allItems) {
 
   // Summary
   if (summary) {
-    lines.push(summary);
+    lines.push(escapeMdx(summary));
     lines.push('');
   }
 
@@ -119,7 +124,7 @@ function renderItem(item, allItems) {
         const childSummary = stripHtml(child.summary ?? '');
         lines.push(`### \`${child.name ?? child.id}\``);
         lines.push('');
-        if (childSummary) { lines.push(childSummary); lines.push(''); }
+        if (childSummary) { lines.push(escapeMdx(childSummary)); lines.push(''); }
         if (childSyntax) {
           lines.push('```csharp');
           lines.push(childSyntax);
@@ -193,13 +198,14 @@ async function main() {
     if (!primary?.uid || primary.type === 'Namespace') continue; // Namespaces handled differently or skipped
 
     const title = primary.name ?? primary.uid;
-    const description = stripHtml(primary.summary ?? `${primary.type ?? 'Type'} documentation`);
+    const descriptionRaw = stripHtml(primary.summary ?? `${primary.type ?? 'Type'} documentation`);
+    const description = descriptionRaw.replace(/\s*\n\s*/g, ' ').replace(/"/g, '\\"').slice(0, 200).trim();
     const slug = uidToSlug(primary.uid);
     const body = renderItem(primary, allItems); // Use allItems for cross-file children lookup if needed
 
     const mdx = `---
 title: "${title.replace(/"/g, '\\"')}"
-description: "${description.replace(/"/g, '\\"').slice(0, 200)}"
+description: "${description}"
 sidebar:
   label: "${title.replace(/"/g, '\\"')}"
 ---
