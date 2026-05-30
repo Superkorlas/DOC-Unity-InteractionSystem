@@ -1,0 +1,62 @@
+---
+title: "ActionExecutedEventArgs"
+description: "Event arguments passed when an interaction action is executed. Contains references to the target, the executed action, and the result."
+sidebar:
+  label: "ActionExecutedEventArgs"
+---
+
+**Namespace:** `FireSoftworks.Interaction`  
+**Assembly:** `FireSoftworks.Interaction`  
+**Type:** Class  
+
+Event arguments passed when an interaction action is executed.
+Contains references to the target, the executed action, and the result.
+
+```csharp
+public class ActionExecutedEventArgs
+```
+
+## Constructors
+
+### `ActionExecutedEventArgs(IInteractable, IInteractableAction, InteractionResult)`
+
+Creates a new ActionExecutedEventArgs with the given parameters.
+
+```csharp
+public ActionExecutedEventArgs(IInteractable target, IInteractableAction action, InteractionResult result)
+```
+
+**Parameters**
+
+| Name | Type | Description |
+|---|---|---|
+| `target` | `FireSoftworks.Interaction.IInteractable` | The interactable target that was interacted with. |
+| `action` | `FireSoftworks.Interaction.IInteractableAction` | The action that was executed. |
+| `result` | `FireSoftworks.Interaction.InteractionResult` | The result of the action execution. |
+
+## Fields
+
+### `Action`
+
+The action that was executed.
+
+```csharp
+public readonly IInteractableAction Action
+```
+
+### `Result`
+
+The result of the action execution (success/failure with optional message).
+
+```csharp
+public readonly InteractionResult Result
+```
+
+### `Target`
+
+The interactable object that was targeted by the action.
+
+```csharp
+public readonly IInteractable Target
+```
+

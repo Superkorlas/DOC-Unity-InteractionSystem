@@ -1,0 +1,113 @@
+---
+title: "InteractableAction"
+description: "Convenient base class for interaction actions with common serialized fields. Automatically implements IInteractableAction by providing Id and Label properties. Subclasses only need to override the Exe"
+sidebar:
+  label: "InteractableAction"
+---
+
+**Namespace:** `FireSoftworks.Interaction`  
+**Assembly:** `FireSoftworks.Interaction`  
+**Type:** Class  
+
+Convenient base class for interaction actions with common serialized fields.
+Automatically implements IInteractableAction by providing Id and Label properties.
+Subclasses only need to override the Execute method.
+
+This class is designed to be attached as a MonoBehaviour component on the same GameObject
+as an InteractableTarget component.
+
+Example usage:
+
+public class OpenDoorAction : InteractableAction
+\{
+    public override void Execute(InteractionContext context)
+    \{
+        // Open the door logic here
+    \}
+\}
+
+```csharp
+[RequireComponent(typeof(InteractableTarget))]
+public class InteractableAction : MonoBehaviour, IInteractableAction
+```
+
+## Methods
+
+### `Execute(InteractionContext)`
+
+Override this method to implement the specific action logic.
+This method is called when the player executes this action.
+
+```csharp
+public virtual void Execute(InteractionContext context)
+```
+
+**Parameters**
+
+| Name | Type | Description |
+|---|---|---|
+| `context` | `FireSoftworks.Interaction.InteractionContext` | The interaction context containing information about the interactor and environment. |
+
+### `IsAvailable(InteractionContext)`
+
+Determines whether this action is currently available in the given context.
+Override this method to implement conditional action availability.
+By default, actions are available if they are enabled, but you can add additional logic (e.g., check player state, environment conditions, etc.).
+
+```csharp
+public virtual bool IsAvailable(InteractionContext context)
+```
+
+**Parameters**
+
+| Name | Type | Description |
+|---|---|---|
+| `context` | `FireSoftworks.Interaction.InteractionContext` | The interaction context containing information about the interactor and environment. |
+
+**Returns:** True if the action can be executed, false otherwise.  
+
+## Propertys
+
+### `Icon`
+
+Gets the sprite/icon for this action to be displayed in the HUD.
+Returns null if no icon is assigned, in which case only the label text is displayed.
+
+```csharp
+public Sprite Icon { get; }
+```
+
+### `Id`
+
+Gets the technical identifier for this action.
+
+```csharp
+public string Id { get; }
+```
+
+### `Label`
+
+Gets the human-readable label for this action displayed in the UI.
+
+```csharp
+public string Label { get; }
+```
+
+### `OnExecuted`
+
+Gets the UnityEvent that will be invoked after execution.
+
+```csharp
+public UnityEvent<InteractionContext> OnExecuted { get; }
+```
+
+### `ShowWhenUnavailable`
+
+Determines if this action should be displayed in the UI when unavailable.
+Override in subclasses if you want to hide this action when it's not available.
+By default, unavailable actions are shown (grayed out).
+
+```csharp
+public virtual bool ShowWhenUnavailable { get; }
+```
+

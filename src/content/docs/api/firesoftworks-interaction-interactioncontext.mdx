@@ -1,0 +1,92 @@
+---
+title: "InteractionContext"
+description: "Immutable data structure passed to action validators and execution methods. Contains contextual information about the interaction (interactor, target, environment). This struct is read-only to ensure"
+sidebar:
+  label: "InteractionContext"
+---
+
+**Namespace:** `FireSoftworks.Interaction`  
+**Assembly:** `FireSoftworks.Interaction`  
+**Type:** Struct  
+
+Immutable data structure passed to action validators and execution methods.
+Contains contextual information about the interaction (interactor, target, environment).
+This struct is read-only to ensure consistency across the interaction pipeline.
+
+```csharp
+public readonly struct InteractionContext
+```
+
+## Constructors
+
+### `InteractionContext(GameObject, Transform, GameObject, Transform, RaycastHit?, float)`
+
+Creates a new InteractionContext with the given parameters.
+
+```csharp
+public InteractionContext(GameObject interactable, Transform interactableTransform, GameObject interactor, Transform interactorTransform, RaycastHit? hit, float maxDistance)
+```
+
+**Parameters**
+
+| Name | Type | Description |
+|---|---|---|
+| `interactable` | `UnityEngine.GameObject` | The GameObject being interacted with. |
+| `interactableTransform` | `UnityEngine.Transform` | The Transform of the interactable object. |
+| `interactor` | `UnityEngine.GameObject` | The GameObject performing the interaction. |
+| `interactorTransform` | `UnityEngine.Transform` | The Transform of the interactor. |
+| `hit` | `System.Nullable{UnityEngine.RaycastHit}` | Optional raycast hit information; null for programmatic interactions. |
+| `maxDistance` | `System.Single` | The maximum allowed interaction distance. |
+
+## Fields
+
+### `Hit`
+
+Optional raycast hit information if the interaction was detected via raycast.
+Can be null if the interaction was triggered programmatically.
+
+```csharp
+public readonly RaycastHit? Hit
+```
+
+### `Interactable`
+
+The GameObject being interacted with (e.g., an item or NPC).
+
+```csharp
+public readonly GameObject Interactable
+```
+
+### `InteractableTransform`
+
+The Transform of the interactable for position/rotation queries.
+
+```csharp
+public readonly Transform InteractableTransform
+```
+
+### `Interactor`
+
+The GameObject performing the interaction (e.g., the Player).
+
+```csharp
+public readonly GameObject Interactor
+```
+
+### `InteractorTransform`
+
+The Transform of the interactor for position/rotation queries.
+
+```csharp
+public readonly Transform InteractorTransform
+```
+
+### `MaxDistance`
+
+The maximum distance allowed for this interaction.
+Useful for validating action availability based on proximity.
+
+```csharp
+public readonly float MaxDistance
+```
+

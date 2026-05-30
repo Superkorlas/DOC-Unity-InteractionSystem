@@ -1,0 +1,75 @@
+---
+title: "InteractableActionSOWrapper"
+description: "Base class for hybrid interaction actions that combine a ScriptableObject (InteractableActionSO) for shared logic/configuration with per-instance state in a MonoBehaviour. Inherit from this class to e"
+sidebar:
+  label: "InteractableActionSOWrapper"
+---
+
+**Namespace:** `FireSoftworks.Interaction`  
+**Assembly:** `FireSoftworks.Interaction`  
+**Type:** Class  
+
+Base class for hybrid interaction actions that combine a ScriptableObject (InteractableActionSO)
+for shared logic/configuration with per-instance state in a MonoBehaviour.
+Inherit from this class to easily create actions that need both SO-driven logic and unique state per interactable.
+
+```csharp
+public class InteractableActionSOWrapper : InteractableAction, IInteractableAction
+```
+
+## Methods
+
+### `Awake()`
+
+Assigns SO values to base fields on Awake. Override for custom initialization.
+
+```csharp
+protected virtual void Awake()
+```
+
+### `Execute(InteractionContext)`
+
+Executes the action by delegating to the ScriptableObject.
+Override to add per-instance state logic.
+
+```csharp
+public override void Execute(InteractionContext context)
+```
+
+**Parameters**
+
+| Name | Type | Description |
+|---|---|---|
+| `context` | `FireSoftworks.Interaction.InteractionContext` | The current  for this interaction. |
+
+### `IsAvailable(InteractionContext)`
+
+Determines whether this action is currently available for execution.
+Override to add per-instance state logic.
+
+```csharp
+public override bool IsAvailable(InteractionContext context)
+```
+
+**Parameters**
+
+| Name | Type | Description |
+|---|---|---|
+| `context` | `FireSoftworks.Interaction.InteractionContext` | The current  for this interaction. |
+
+**Returns:** true if the action is available; otherwise, false.  
+
+## Fields
+
+### `actionSO`
+
+The ScriptableObject that provides shared action logic and configuration.
+Assign this in the Inspector; the wrapper delegates  and
+ to this asset while maintaining its own per-instance state.
+
+```csharp
+[Tooltip("Reference to the ScriptableObject action definition.")]
+[SerializeField]
+protected InteractableActionSO actionSO
+```
+

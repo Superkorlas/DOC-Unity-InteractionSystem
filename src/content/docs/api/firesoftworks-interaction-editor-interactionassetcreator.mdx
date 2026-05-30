@@ -6,6 +6,7 @@ sidebar:
 ---
 
 **Namespace:** `FireSoftworks.Interaction.Editor`  
+**Assembly:** `FireSoftworks.Interaction.Editor`  
 **Type:** Class  
 
 Editor utilities for creating Interaction System assets.
@@ -18,7 +19,8 @@ public static class InteractionAssetCreator
 
 ### `CreateAsset<T>(string)`
 
-Generic method to create ScriptableObject assets with proper naming and location.
+Generic helper that creates a  asset of type T
+in the currently selected project folder, generating a unique file name automatically.
 
 ```csharp
 public static void CreateAsset<T>(string defaultName) where T : ScriptableObject
@@ -28,7 +30,7 @@ public static void CreateAsset<T>(string defaultName) where T : ScriptableObject
 
 | Name | Type | Description |
 |---|---|---|
-| `defaultName` | `System.String` |  |
+| `defaultName` | `System.String` | Base file name used when generating the asset path. |
 
 ### `CreateInteractableActionSO()`
 
