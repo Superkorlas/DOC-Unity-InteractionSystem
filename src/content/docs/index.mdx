@@ -1,9 +1,9 @@
 ---
 title: Interaction System
-description: Modular, raycast-based interaction system for Unity 6 — camera-agnostic and input-agnostic.
+description: A lightweight, production-ready interaction system for Unity — camera-agnostic, input-agnostic, and event-driven.
 template: splash
 hero:
-  tagline: A plug-and-play interaction framework for Unity 6. Drop it in, wire up events, ship.
+  tagline: A lightweight, production-ready interaction system for Unity. Entirely camera-agnostic and input-agnostic, it allows you to build flexible gameplay interactions using a clean, event-driven architecture with zero external dependencies.
   actions:
     - text: Quick Start
       link: /Unity-InteractionSystem/quick-start/
@@ -16,28 +16,23 @@ hero:
 
 import { Card, CardGrid, LinkCard } from '@astrojs/starlight/components';
 
-## What is it?
-
-The **Interaction System** is a Unity UPM package that gives your game a clean, extensible layer for player ↔ world interactions. It is built around three core ideas:
-
-- **Camera-agnostic** — works with any camera setup; you provide the camera, the system handles the raycast.
-- **Input-agnostic** — you call `HandleInteraction()` from your input code; no hard dependency on any input system.
-- **Action-driven** — every interactable object exposes one or more `IInteractableAction` implementations, which you can mix freely in three styles.
-
----
+## 🚀 Key Features
 
 <CardGrid stagger>
-  <Card title="Three action styles" icon="puzzle">
-    Choose **Component-based** (per-object state), **ScriptableObject-based** (shared/reusable logic), or **Hybrid Wrapper** (SO logic + per-instance state). All three are discovered and sorted transparently.
+  <Card title="Flexible Architecture" icon="puzzle">
+    Supports **Component-based**, **ScriptableObject-based**, and **Hybrid wrapper** actions. Mix and match based on your state persistence requirements.
   </Card>
-  <Card title="Rich event system" icon="seti:code-search">
-    C# events and serializable UnityEvents for every lifecycle point: focus enter/exit, actions discovered, selection changed, action executed. Wire up UI and audio without a single hard dependency.
+  <Card title="Mixed Discovery" icon="seti:code-search">
+    Automatically scans, sorts, and lists both components and ScriptableObjects sitting on the same interactable target.
   </Card>
-  <Card title="Inspector-friendly" icon="setting">
-    `[SerializeField]` fields, `[RequireComponent]` guards, editor menu helpers (`Create > FireSoftworks > Interaction`) and ScriptableObject configuration out of the box.
+  <Card title="Event-Driven Lifecycle" icon="setting">
+    Rich C# and UnityEvents for discovery, selection tracking, execution, and focus loss — perfect for driving your custom UI, audio, or animation states.
   </Card>
-  <Card title="No external dependencies" icon="approve-check-circle">
-    Zero coupling to inventory, UI, or physics systems. Drop it into any project and integrate at the event layer.
+  <Card title="Camera-Agnostic Raycasting" icon="seti:camera">
+    Built-in decoupled raycast detection with customizable LayerMask filtering. Works out of the box with First-Person, Third-Person, or Top-down viewports.
+  </Card>
+  <Card title="Extremely Lightweight" icon="approve-check-circle">
+    Completely standalone. No forced dependencies on specific UI frameworks, physics setups, or inventory systems. Clean code that integrates seamlessly into your existing codebase.
   </Card>
 </CardGrid>
 
@@ -47,7 +42,7 @@ The **Interaction System** is a Unity UPM package that gives your game a clean, 
 
 | Property | Value |
 |---|---|
-| Package name | `com.firesoftworks.interaction.system` |
+| Package name | `individual.alejandro-de-la-plata-ramos.interaction-system` |
 | Unity version | 6000.0+ |
 | Namespace | `FireSoftworks.Interaction` |
 | License | See `LICENSE.md` |

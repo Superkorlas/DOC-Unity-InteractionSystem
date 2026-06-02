@@ -28,10 +28,10 @@ The player never calls your game logic directly.
   <TabItem label="Package Manager (local disk)">
     1. Open **Window › Package Manager**.
     2. Click **+** › **Add package from disk…**
-    3. Navigate to the `com.firesoftworks.interaction.system` folder and select `package.json`.
+    3. Navigate to the `individual.alejandro-de-la-plata-ramos.interaction-system` folder and select `package.json`.
   </TabItem>
   <TabItem label="Copy into Packages/">
-    Copy the entire `com.firesoftworks.interaction.system` folder into your project's `Packages/` directory.
+    Copy the entire `individual.alejandro-de-la-plata-ramos.interaction-system` folder into your project's `Packages/` directory.
     Unity picks it up automatically — no extra steps needed.
   </TabItem>
 </Tabs>
@@ -40,34 +40,25 @@ The player never calls your game logic directly.
 
 ## Running the Demo scene
 
-The package includes a **Demo** sample with a complete working scene. Before pressing Play, two things need to be configured manually.
+The package includes a **Demo** sample with a complete working scene. It is **plug & play** — import it, open the scene, and press Play.
 
 <Steps>
 
 1. ### Import the sample
 
-   In Unity, open **Window › Package Manager**, locate the **Interaction System** package, expand the **Samples** section, and click **Import** next to **Demo**.
+   In Unity, open **Window › Package Manager**, locate the **Interaction System** package, expand the **Samples** section, and click **Import** next to **Demo Scene**.
 
    Then open the imported scene:  
-   `Assets/Samples/Interaction System/0.1.0/Demo/Scenes/SampleScene`
+   `Assets/Samples/Interaction System/1.0.0/Demo Scene/Scenes/SampleScene`
 
-2. ### Assign the Input Actions asset
+2. ### Press Play
 
-   The demo player (`PlayerInputHandler`) uses **Unity's New Input System** and requires an Input Actions asset assigned to it.
+   The demo is fully self-contained. Input Actions are pre-configured and included with the package. The `RaycastInteractor` uses the **Default** layer mask, which is the layer all demo interactables are already on.
 
-   Select the Player GameObject → on the **Player Input Handler** component → assign your project's Input Actions asset to the **Input Actions** field.
-
-3. ### Configure the Interactable Mask
-
-   The [`RaycastInteractor`](/Unity-InteractionSystem/api/raycastinteractor/) only detects objects on layers included in its **Interactable Mask** field. If the scene's interactable objects are not being detected (crosshair over an object but nothing happens), the layer is not included in the mask.
-
-   To fix it:
-   1. Select the Player GameObject → find the **Raycast Interactor** component.
-   2. In **Interactable Mask**, enable the layer your interactable objects are on.
-   3. If you are just testing, set the mask to **Everything** to detect all layers.
+   No extra setup is needed — the scene works immediately out of the box.
 
    <Aside type="tip">
-   For production projects, create a dedicated **Interactable** layer and assign all interactable objects to it. Then set the mask to only that layer. This prevents the raycast from testing geometry that will never be interactive and avoids false detections.
+   For your own projects, consider creating a dedicated **Interactable** layer and restricting the **Interactable Mask** to that layer. This prevents the raycast from testing geometry that will never be interactive and avoids false detections.
    </Aside>
 
 </Steps>
@@ -133,25 +124,15 @@ The base [`InteractableAction`](/Unity-InteractionSystem/api/interactableaction/
 
 3. ### Control availability by enabling / disabling
 
-   The demo's **door** uses two [`InteractableAction`](/Unity-InteractionSystem/api/interactableaction/) components on the same object — one labelled **Open**, one labelled **Close**. The `DoorController` script keeps references to both and enables only the one that makes sense:
+   Add two [`InteractableAction`](/Unity-InteractionSystem/api/interactableaction/) components to the same object — one labelled **Open**, one labelled **Close** — and enable only the one that makes sense at any given moment:
 
    ```csharp
-   // From the demo's DoorController.cs — no InteractableAction subclass needed.
-   [SerializeField] private InteractableAction openAction;
-   [SerializeField] private InteractableAction closeAction;
-
-   private void UpdateActions()
-   {
-       openAction.enabled  = !isOpen;   // "Open"  only available when closed
-       closeAction.enabled =  isOpen;   // "Close" only available when open
-   }
+   // Enable/disable from any script that knows the current state.
+   openAction.enabled  = !isOpen;
+   closeAction.enabled =  isOpen;
    ```
 
-   Each action's `OnExecuted` is wired in the Inspector:
-   - `openAction.OnExecuted`  → `DoorController.Open()`
-   - `closeAction.OnExecuted` → `DoorController.Close()`
-
-   No `IsAvailable()` override. No `Execute()` override. Zero extra scripts.
+   Wire each action's `OnExecuted` in the Inspector to the corresponding method on your controller. No `IsAvailable()` override, no `Execute()` override, no extra scripts.
 
 4. ### Wire the interact input
 
@@ -160,50 +141,16 @@ The base [`InteractableAction`](/Unity-InteractionSystem/api/interactableaction/
    <Tabs>
      <TabItem label="New Input System">
        ```csharp
-       using FireSoftworks.Interaction;
-       using UnityEngine;
-       using UnityEngine.InputSystem;
-
-       public class PlayerInputHandler : MonoBehaviour
-       {
-           [SerializeField] private RaycastInteractor interactor;
-           private InputAction interactAction;
-
-           private void OnEnable()
-           {
-               // Replace with your actual action name.
-               interactAction = InputSystem.actions.FindAction("Interact", throwIfNotFound: true);
-               interactAction.started += OnInteract;
-           }
-
-           private void OnDisable()
-           {
-               interactAction.started -= OnInteract;
-           }
-
-           private void OnInteract(InputAction.CallbackContext ctx)
-           {
-               if (interactor.isInteractionAvailable)
-                   interactor.HandleInteraction();
-           }
-       }
+       // When the interact button is pressed:
+       if (interactor.isInteractionAvailable)
+           interactor.HandleInteraction();
        ```
      </TabItem>
      <TabItem label="Legacy Input Manager">
        ```csharp
-       using FireSoftworks.Interaction;
-       using UnityEngine;
-
-       public class PlayerInputHandler : MonoBehaviour
-       {
-           [SerializeField] private RaycastInteractor interactor;
-
-           private void Update()
-           {
-               if (Input.GetKeyDown(KeyCode.E) && interactor.isInteractionAvailable)
-                   interactor.HandleInteraction();
-           }
-       }
+       // In Update():
+       if (Input.GetKeyDown(KeyCode.E) && interactor.isInteractionAvailable)
+           interactor.HandleInteraction();
        ```
      </TabItem>
    </Tabs>
@@ -228,7 +175,7 @@ The base [`InteractableAction`](/Unity-InteractionSystem/api/interactableaction/
 |---|---|---|
 | **Player Camera** | *(none — required)* | The camera from which the detection ray is cast. |
 | **Interaction Range** | `6` | Maximum distance in Unity units at which objects can be detected. |
-| **Interactable Mask** | Everything | Layer mask for the raycast. Restrict this to a dedicated layer for better performance. |
+| **Interactable Mask** | Default | Layer mask for the raycast. The demo uses the Default layer. For production, restrict this to a dedicated Interactable layer for better performance. |
 | **Show Unavailable Actions** | `true` | When enabled, actions whose `IsAvailable()` returns `false` are still listed in the HUD (grayed out). Disable to hide them entirely. |
 | **Interact To Show Actions** | `false` | Enables two-step interaction mode — [see below](#two-step-mode). |
 
@@ -269,45 +216,24 @@ Use a subclass only when you need **conditional availability** or **logic beyond
 
 <Tabs>
   <TabItem label="Component action">
-    Extend [`InteractableAction`](/Unity-InteractionSystem/api/interactableaction/) and add it as a component alongside [`InteractableTarget`](/Unity-InteractionSystem/api/interactabletarget/) (which, again, Unity adds automatically).
+    Extend [`InteractableAction`](/Unity-InteractionSystem/api/interactableaction/) and add it as a component alongside [`InteractableTarget`](/Unity-InteractionSystem/api/interactabletarget/) (which Unity adds automatically).
 
     ```csharp
-    using FireSoftworks.Interaction;
-    using UnityEngine;
-
-    // From the demo: LightToggleAction.cs
-    // Two of these go on the same light GameObject —
-    // one with turnsOn = true, one with turnsOn = false.
-    [RequireComponent(typeof(InteractableTarget))]
-    public class LightToggleAction : InteractableAction
+    public class MyAction : InteractableAction
     {
-        [SerializeField] private Light targetLight;
-        [SerializeField] private bool turnsOn = true;
-
-        private void Awake()
-        {
-            if (targetLight == null)
-                targetLight = GetComponentInChildren<Light>();
-        }
-
-        // Return false to gray out (or hide) the action in the HUD.
         public override bool IsAvailable(InteractionContext context)
         {
-            if (targetLight == null) return false;
-            // "Turn On" only available when light is off, and vice versa.
-            return turnsOn ? !targetLight.enabled : targetLight.enabled;
+            // Return false to gray out (or hide) this action in the HUD.
+            return /* your condition */;
         }
 
         public override void Execute(InteractionContext context)
         {
-            targetLight.enabled = turnsOn;
-            base.Execute(context); // fires OnExecuted — always call this
+            // Your logic here.
+            base.Execute(context); // always call — fires OnExecuted
         }
     }
     ```
-
-    `base.Execute(context)` fires the Inspector-wired `OnExecuted` event.
-    Always call it at the end unless you explicitly want to suppress it.
   </TabItem>
 
   <TabItem label="ScriptableObject action">
@@ -316,24 +242,14 @@ Use a subclass only when you need **conditional availability** or **logic beyond
     and drag them into the **SO Actions** list on any [`InteractableTarget`](/Unity-InteractionSystem/api/interactabletarget/).
 
     ```csharp
-    using FireSoftworks.Interaction;
-    using UnityEngine;
-
-    // Stateless — safe to share between any number of interactables.
-    [CreateAssetMenu(
-        menuName = "FireSoftworks/Interaction/Inspect Action SO",
-        fileName = "InspectActionSO")]
-    public class InspectActionSO : InteractableActionSO
+    [CreateAssetMenu(menuName = "FireSoftworks/Interaction/My Action SO")]
+    public class MyActionSO : InteractableActionSO
     {
-        [SerializeField] private string inspectText = "Nothing special here.";
-
-        // Default: all SO actions are always available.
-        // Override only if you need conditions.
         public override bool IsAvailable(InteractionContext context) => true;
 
         public override void Execute(InteractionContext context)
         {
-            Debug.Log(inspectText);
+            // Shared logic — no per-instance state here.
             OnExecuted?.Invoke(context);
         }
     }
@@ -342,17 +258,10 @@ Use a subclass only when you need **conditional availability** or **logic beyond
 
   <TabItem label="Hybrid Wrapper">
     Use [`InteractableActionSOWrapper`](/Unity-InteractionSystem/api/interactableactionsowrapper/) when you want **shared SO logic** but **per-instance state**
-    (e.g. a key that each door instance tracks independently).
+    (e.g. a flag that each object instance tracks independently).
 
     ```csharp
-    using FireSoftworks.Interaction;
-    using UnityEngine;
-
-    // From the demo: KeyUnlockActionSOWrapper.cs
-    // The SO (KeyUnlockActionSO) checks whether the player has the key.
-    // The wrapper adds a per-instance "used" flag so each door can only be
-    // unlocked once, independently of every other door.
-    public class KeyUnlockActionSOWrapper : InteractableActionSOWrapper
+    public class MyActionSOWrapper : InteractableActionSOWrapper
     {
         private bool used = false;
 
@@ -363,17 +272,12 @@ Use a subclass only when you need **conditional availability** or **logic beyond
 
         public override void Execute(InteractionContext context)
         {
-            if (used) return;
             used = true;
-            base.Execute(context);          // runs the SO logic
-            OnExecuted.Invoke(context);     // fires Inspector-wired callbacks
-                                            // e.g. DoorController.Unlock()
+            base.Execute(context);      // runs the shared SO logic
+            OnExecuted.Invoke(context); // fires Inspector-wired callbacks
         }
     }
     ```
-
-    The `OnExecuted` wiring in the Inspector lets you call `DoorController.Unlock()` from the wrapper
-    without the SO knowing anything about `DoorController`.
   </TabItem>
 </Tabs>
 
@@ -381,53 +285,36 @@ Use a subclass only when you need **conditional availability** or **logic beyond
 
 ### Reacting to events in code
 
-When your UI manager needs to subscribe programmatically, use the C# events on [`InteractorBase`](/Unity-InteractionSystem/api/interactorbase/) directly.
-The demo's `InteractionHUD` does exactly this:
+When your UI manager needs to subscribe programmatically, use the C# events on [`InteractorBase`](/Unity-InteractionSystem/api/interactorbase/) directly:
 
 ```csharp
-using FireSoftworks.Interaction;
-using UnityEngine;
-
-public class InteractionHUD : MonoBehaviour
+private void OnEnable()
 {
-    [SerializeField] private InteractorBase interactor;
+    interactor.ShowActionsDiscovered  += OnActionsDiscovered;
+    interactor.ActionSelectionChanged += OnSelectionChanged;
+    interactor.InteractionEnded       += OnInteractionEnded;
+}
 
-    private void OnEnable()
-    {
-        // ShowActionsDiscovered fires when the player aims at an interactable.
-        // The args contain the pre-filtered list of visible actions.
-        interactor.ShowActionsDiscovered  += OnShowActionsDiscovered;
-        interactor.ActionSelectionChanged += OnActionSelectionChanged;
-        interactor.InteractionEnded       += OnInteractionEnded;
-    }
+private void OnDisable()
+{
+    interactor.ShowActionsDiscovered  -= OnActionsDiscovered;
+    interactor.ActionSelectionChanged -= OnSelectionChanged;
+    interactor.InteractionEnded       -= OnInteractionEnded;
+}
 
-    private void OnDisable()
-    {
-        // Always unsubscribe — forgetting this causes errors on destroyed objects.
-        interactor.ShowActionsDiscovered  -= OnShowActionsDiscovered;
-        interactor.ActionSelectionChanged -= OnActionSelectionChanged;
-        interactor.InteractionEnded       -= OnInteractionEnded;
-    }
+private void OnActionsDiscovered(ActionsDiscoveredEventArgs args)
+{
+    // args.Actions — the visible action list; use it to populate your HUD
+}
 
-    private void OnShowActionsDiscovered(ActionsDiscoveredEventArgs args)
-    {
-        // args.Actions — visible IInteractableAction list (already filtered)
-        // args.Target  — the IInteractable that was focused
-        // args.Context — the full InteractionContext (hit point, distance, etc.)
-        foreach (var action in args.Actions)
-            Debug.Log($"[{action.Id}] {action.Label}");
-    }
+private void OnSelectionChanged(ActionSelectionChangedEventArgs args)
+{
+    // args.Action — the newly selected action; highlight it in the HUD
+}
 
-    private void OnActionSelectionChanged(ActionSelectionChangedEventArgs args)
-    {
-        // args.Action — the newly selected IInteractableAction (null if none)
-        // args.Index  — its index in the visible list (-1 if none)
-    }
-
-    private void OnInteractionEnded(InteractionLifecycleEventArgs args)
-    {
-        // Hide the HUD
-    }
+private void OnInteractionEnded(InteractionLifecycleEventArgs args)
+{
+    // Hide the HUD
 }
 ```
 
@@ -446,16 +333,9 @@ An object can have any number of actions — component-based and SO-based coexis
 When more than one action is visible, the player can cycle between them:
 
 ```csharp
-// Scroll wheel example — from the demo's PlayerInputHandler.cs
-void Update()
-{
-    float scroll = zoomAction.ReadValue<float>();
-
-    if (scroll < 0 && interactor.IsInteracting())
-        interactor.SelectNextAction();
-    else if (scroll > 0 && interactor.IsInteracting())
-        interactor.SelectPreviousAction();
-}
+// Call from your input handling code:
+interactor.SelectNextAction();
+interactor.SelectPreviousAction();
 ```
 
 `SelectNextAction()` and `SelectPreviousAction()` skip unavailable actions automatically,
@@ -491,7 +371,7 @@ Before pressing Play:
 - [ ] [`RaycastInteractor`](/Unity-InteractionSystem/api/raycastinteractor/) is on the player — **Player Camera** is assigned.
 - [ ] The interactable object has a **Collider** and at least one [`InteractableAction`](/Unity-InteractionSystem/api/interactableaction/) component (which adds [`InteractableTarget`](/Unity-InteractionSystem/api/interactabletarget/) automatically).
 - [ ] Your input code calls `interactor.HandleInteraction()` on the interact button.
-- [ ] **Interactable Mask** includes the layer your objects are on (or leave it as *Everything* while testing).
+- [ ] **Interactable Mask** includes the layer your objects are on (defaults to *Default* — change to a dedicated layer in production for better performance).
 
 ---
 
