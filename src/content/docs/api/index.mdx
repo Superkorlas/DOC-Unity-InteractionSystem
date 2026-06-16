@@ -20,9 +20,9 @@ This section contains the full API reference for the `com.firesoftworks.interact
 ## Core interfaces
 
 <CardGrid>
-  <LinkCard title="IInteractor" href="/Unity-InteractionSystem/api/iinteractor/" description="Contract for player-side interaction: detection, action selection, and execution." />
-  <LinkCard title="IInteractable" href="/Unity-InteractionSystem/api/iinteractable/" description="Contract for world objects that can surface one or more actions." />
-  <LinkCard title="IInteractableAction" href="/Unity-InteractionSystem/api/iinteractableaction/" description="Contract for a single discrete action (Consume, Open, Inspect…)." />
+  <LinkCard title="IInteractor" href="/DOC-Unity-InteractionSystem/api/iinteractor/" description="Contract for player-side interaction: detection, action selection, and execution." />
+  <LinkCard title="IInteractable" href="/DOC-Unity-InteractionSystem/api/iinteractable/" description="Contract for world objects that can surface one or more actions." />
+  <LinkCard title="IInteractableAction" href="/DOC-Unity-InteractionSystem/api/iinteractableaction/" description="Contract for a single discrete action (Consume, Open, Inspect…)." />
 </CardGrid>
 
 ---
@@ -30,10 +30,10 @@ This section contains the full API reference for the `com.firesoftworks.interact
 ## Base classes
 
 <CardGrid>
-  <LinkCard title="InteractorBase" href="/Unity-InteractionSystem/api/interactorbase/" description="Abstract base providing action management, selection, and event broadcasting. Extend this to create custom interactors." />
-  <LinkCard title="InteractableAction" href="/Unity-InteractionSystem/api/interactableaction/" description="MonoBehaviour base for component-based actions." />
-  <LinkCard title="InteractableActionSO" href="/Unity-InteractionSystem/api/interactableactionso/" description="ScriptableObject base for reusable, shared-logic actions." />
-  <LinkCard title="InteractableActionSOWrapper" href="/Unity-InteractionSystem/api/interactableactionsowrapper/" description="MonoBehaviour wrapper that delegates to an SO while maintaining per-instance state." />
+  <LinkCard title="InteractorBase" href="/DOC-Unity-InteractionSystem/api/interactorbase/" description="Abstract base providing action management, selection, and event broadcasting. Extend this to create custom interactors." />
+  <LinkCard title="InteractableAction" href="/DOC-Unity-InteractionSystem/api/interactableaction/" description="MonoBehaviour base for component-based actions." />
+  <LinkCard title="InteractableActionSO" href="/DOC-Unity-InteractionSystem/api/interactableactionso/" description="ScriptableObject base for reusable, shared-logic actions." />
+  <LinkCard title="InteractableActionSOWrapper" href="/DOC-Unity-InteractionSystem/api/interactableactionsowrapper/" description="MonoBehaviour wrapper that delegates to an SO while maintaining per-instance state." />
 </CardGrid>
 
 ---
@@ -41,8 +41,8 @@ This section contains the full API reference for the `com.firesoftworks.interact
 ## Concrete implementations
 
 <CardGrid>
-  <LinkCard title="RaycastInteractor" href="/Unity-InteractionSystem/api/raycastinteractor/" description="Default interactor using 3D Physics raycasting for target detection." />
-  <LinkCard title="InteractableTarget" href="/Unity-InteractionSystem/api/interactabletarget/" description="Default IInteractable component. Discovers and sorts component and SO actions automatically." />
+  <LinkCard title="RaycastInteractor" href="/DOC-Unity-InteractionSystem/api/raycastinteractor/" description="Default interactor using 3D Physics raycasting for target detection." />
+  <LinkCard title="InteractableTarget" href="/DOC-Unity-InteractionSystem/api/interactabletarget/" description="Default IInteractable component. Discovers and sorts component and SO actions automatically." />
 </CardGrid>
 
 ---
@@ -50,11 +50,11 @@ This section contains the full API reference for the `com.firesoftworks.interact
 ## Event args &amp; context
 
 <CardGrid>
-  <LinkCard title="InteractionContext" href="/Unity-InteractionSystem/api/interactioncontext/" description="Carries the IInteractor reference through the interaction pipeline." />
-  <LinkCard title="ActionsDiscoveredEventArgs" href="/Unity-InteractionSystem/api/actionsdiscoveredeventargs/" description="Payload for actions-discovered events." />
-  <LinkCard title="ActionSelectionChangedEventArgs" href="/Unity-InteractionSystem/api/actionselectionchangedeventargs/" description="Payload for selection-changed events." />
-  <LinkCard title="ActionExecutedEventArgs" href="/Unity-InteractionSystem/api/actionexecutedeventargs/" description="Payload for action-executed events." />
-  <LinkCard title="InteractionLifecycleEventArgs" href="/Unity-InteractionSystem/api/interactionlifecycleeventargs/" description="Payload for start/end lifecycle events." />
-  <LinkCard title="InteractionResult" href="/Unity-InteractionSystem/api/interactionresult/" description="Enum describing the outcome of an action execution." />
+  <LinkCard title="InteractionContext" href="/DOC-Unity-InteractionSystem/api/interactioncontext/" description="Carries the IInteractor reference through the interaction pipeline." />
+  <LinkCard title="ActionsDiscoveredEventArgs" href="/DOC-Unity-InteractionSystem/api/actionsdiscoveredeventargs/" description="Payload for actions-discovered events." />
+  <LinkCard title="ActionSelectionChangedEventArgs" href="/DOC-Unity-InteractionSystem/api/actionselectionchangedeventargs/" description="Payload for selection-changed events." />
+  <LinkCard title="ActionExecutedEventArgs" href="/DOC-Unity-InteractionSystem/api/actionexecutedeventargs/" description="Payload for action-executed events." />
+  <LinkCard title="InteractionLifecycleEventArgs" href="/DOC-Unity-InteractionSystem/api/interactionlifecycleeventargs/" description="Payload for start/end lifecycle events." />
+  <LinkCard title="InteractionResult" href="/DOC-Unity-InteractionSystem/api/interactionresult/" description="Enum describing the outcome of an action execution." />
 </CardGrid>
 

@@ -15,13 +15,13 @@ const PORTFOLIO_THEME_URL = isProd
 /**
  * GitHub Pages base path.
  * Change BASE_PATH env var if the repo is named differently.
- * Default: /Unity-InteractionSystem (deployed from github.com/Superkorlas/Unity-InteractionSystem)
+ * Default: /DOC-Unity-InteractionSystem (deployed from github.com/Superkorlas/DOC-Unity-InteractionSystem)
  */
 const BASE = process.env.BASE_PATH ?? '/DOC-Unity-InteractionSystem/';
 
 export default defineConfig({
   site: 'https://Superkorlas.github.io',
-  base: '/DOC-Unity-InteractionSystem/',
+  base: BASE,
 
   integrations: [
     starlight({

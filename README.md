@@ -1,6 +1,6 @@
 # DOC-Unity-InteractionSystem
 
-Deployed at: **https://Superkorlas.github.io/Unity-InteractionSystem/**
+Deployed at: **https://Superkorlas.github.io/DOC-Unity-InteractionSystem/**
 
 ---
 
@@ -20,7 +20,7 @@ npm install
 npm run dev
 ```
 
-The site will be available at `http://localhost:4321/Unity-InteractionSystem/`.
+The site will be available at `http://localhost:4321/DOC-Unity-InteractionSystem/`.
 
 > The theme is loaded at runtime from the portfolio site (`http://localhost:4321/about-me/theme.css`).
 > If the portfolio isn't running locally, the fallback palette defined in `src/styles/custom.css` is used instead — the site looks correct either way.
@@ -69,7 +69,7 @@ This overwrites the files in `src/content/docs/api/` with freshly generated MDX 
 npm run dev
 ```
 
-Open `http://localhost:4321/Unity-InteractionSystem/api/` and check the updated pages.
+Open `http://localhost:4321/DOC-Unity-InteractionSystem/api/` and check the updated pages.
 
 ---
 

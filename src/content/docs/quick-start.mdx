@@ -13,12 +13,12 @@ Three pieces talk to each other every time the player interacts with something:
 
 | Piece | Lives on | Does |
 |---|---|---|
-| [**`RaycastInteractor`**](/Unity-InteractionSystem/api/raycastinteractor/) | Player GameObject | Casts a ray every frame. Detects interactable objects in front of the camera. |
-| [**`InteractableTarget`**](/Unity-InteractionSystem/api/interactabletarget/) | Any interactable object | Collects all the actions attached to the object and reports them to the interactor. |
-| **Action** ([component](/Unity-InteractionSystem/api/interactableaction/), [SO](/Unity-InteractionSystem/api/interactableactionso/), or [wrapper](/Unity-InteractionSystem/api/interactableactionsowrapper/)) | Same object as the target | Defines *what happens* — open a door, pick up an item, display text. |
+| [**`RaycastInteractor`**](/DOC-Unity-InteractionSystem/api/raycastinteractor/) | Player GameObject | Casts a ray every frame. Detects interactable objects in front of the camera. |
+| [**`InteractableTarget`**](/DOC-Unity-InteractionSystem/api/interactabletarget/) | Any interactable object | Collects all the actions attached to the object and reports them to the interactor. |
+| **Action** ([component](/DOC-Unity-InteractionSystem/api/interactableaction/), [SO](/DOC-Unity-InteractionSystem/api/interactableactionso/), or [wrapper](/DOC-Unity-InteractionSystem/api/interactableactionsowrapper/)) | Same object as the target | Defines *what happens* — open a door, pick up an item, display text. |
 
 The player never calls your game logic directly.
-[`RaycastInteractor`](/Unity-InteractionSystem/api/raycastinteractor/) detects a target → the target returns its actions → your input code calls `HandleInteraction()` → the system executes the selected action → your method runs.
+[`RaycastInteractor`](/DOC-Unity-InteractionSystem/api/raycastinteractor/) detects a target → the target returns its actions → your input code calls `HandleInteraction()` → the system executes the selected action → your method runs.
 
 ---
 
@@ -68,7 +68,7 @@ The package includes a **Demo** sample with a complete working scene. It is **pl
 ## Up and running in 5 minutes
 
 **You do not need to write any scripts for basic interactions.**
-The base [`InteractableAction`](/Unity-InteractionSystem/api/interactableaction/) component works out of the box — fill in the fields in the Inspector and wire the `OnExecuted` event directly to any method on your existing scripts.
+The base [`InteractableAction`](/DOC-Unity-InteractionSystem/api/interactableaction/) component works out of the box — fill in the fields in the Inspector and wire the `OnExecuted` event directly to any method on your existing scripts.
 
 <Steps>
 
@@ -85,8 +85,8 @@ The base [`InteractableAction`](/Unity-InteractionSystem/api/interactableaction/
    Select the object and add:  
    **Component › FireSoftworks › Interaction › Interactable Action**
 
-   [`InteractableTarget`](/Unity-InteractionSystem/api/interactabletarget/) is added **automatically** — you don't need to add it separately.
-   [`InteractableAction`](/Unity-InteractionSystem/api/interactableaction/) is marked `[RequireComponent(typeof(InteractableTarget))]`,
+   [`InteractableTarget`](/DOC-Unity-InteractionSystem/api/interactabletarget/) is added **automatically** — you don't need to add it separately.
+   [`InteractableAction`](/DOC-Unity-InteractionSystem/api/interactableaction/) is marked `[RequireComponent(typeof(InteractableTarget))]`,
    so Unity adds the target for you the moment you add any action component.
 
    <Aside type="note">
@@ -105,7 +105,7 @@ The base [`InteractableAction`](/Unity-InteractionSystem/api/interactableaction/
 
    The **On Executed** event fires every time the player executes this action.
    The target method can have **no parameters** (Unity calls it as a static binding)
-   or accept an [**`InteractionContext`**](/Unity-InteractionSystem/api/interactioncontext/) parameter (Unity passes the live context).
+   or accept an [**`InteractionContext`**](/DOC-Unity-InteractionSystem/api/interactioncontext/) parameter (Unity passes the live context).
 
    ```
    Example wiring in Inspector:
@@ -116,7 +116,7 @@ The base [`InteractableAction`](/Unity-InteractionSystem/api/interactableaction/
    ```
 
    <Aside type="note">
-   [`InteractableAction`](/Unity-InteractionSystem/api/interactableaction/) is **not abstract** — you can add it directly without creating a subclass.
+   [`InteractableAction`](/DOC-Unity-InteractionSystem/api/interactableaction/) is **not abstract** — you can add it directly without creating a subclass.
    Its default `Execute()` does exactly one thing: fire `OnExecuted`.
    Its default `IsAvailable()` returns `true` as long as the component is **enabled**.
    That means you control availability at runtime simply by enabling or disabling the component.
@@ -124,7 +124,7 @@ The base [`InteractableAction`](/Unity-InteractionSystem/api/interactableaction/
 
 3. ### Control availability by enabling / disabling
 
-   Add two [`InteractableAction`](/Unity-InteractionSystem/api/interactableaction/) components to the same object — one labelled **Open**, one labelled **Close** — and enable only the one that makes sense at any given moment:
+   Add two [`InteractableAction`](/DOC-Unity-InteractionSystem/api/interactableaction/) components to the same object — one labelled **Open**, one labelled **Close** — and enable only the one that makes sense at any given moment:
 
    ```csharp
    // Enable/disable from any script that knows the current state.
@@ -169,7 +169,7 @@ The base [`InteractableAction`](/Unity-InteractionSystem/api/interactableaction/
 
 ### All Inspector fields
 
-#### [`RaycastInteractor`](/Unity-InteractionSystem/api/raycastinteractor/)
+#### [`RaycastInteractor`](/DOC-Unity-InteractionSystem/api/raycastinteractor/)
 
 | Field | Default | Description |
 |---|---|---|
@@ -179,14 +179,14 @@ The base [`InteractableAction`](/Unity-InteractionSystem/api/interactableaction/
 | **Show Unavailable Actions** | `true` | When enabled, actions whose `IsAvailable()` returns `false` are still listed in the HUD (grayed out). Disable to hide them entirely. |
 | **Interact To Show Actions** | `false` | Enables two-step interaction mode — [see below](#two-step-mode). |
 
-#### [`InteractableTarget`](/Unity-InteractionSystem/api/interactabletarget/)
+#### [`InteractableTarget`](/DOC-Unity-InteractionSystem/api/interactabletarget/)
 
 | Field | Description |
 |---|---|
-| **SO Actions** | [`InteractableActionSO`](/Unity-InteractionSystem/api/interactableactionso/) assets to include. Component-based [`InteractableAction`](/Unity-InteractionSystem/api/interactableaction/) components are discovered automatically — no list needed for those. |
+| **SO Actions** | [`InteractableActionSO`](/DOC-Unity-InteractionSystem/api/interactableactionso/) assets to include. Component-based [`InteractableAction`](/DOC-Unity-InteractionSystem/api/interactableaction/) components are discovered automatically — no list needed for those. |
 | **Focused Material** | Optional material applied on top of the object's renderer when the player aims at it. Useful for an outline/highlight. Leave empty if you handle highlighting yourself. |
 
-#### [`InteractableAction`](/Unity-InteractionSystem/api/interactableaction/) (and all subclasses)
+#### [`InteractableAction`](/DOC-Unity-InteractionSystem/api/interactableaction/) (and all subclasses)
 
 | Field | Description |
 |---|---|
@@ -197,16 +197,16 @@ The base [`InteractableAction`](/Unity-InteractionSystem/api/interactableaction/
 
 ---
 
-### Inspector events on [`RaycastInteractor`](/Unity-InteractionSystem/api/raycastinteractor/)
+### Inspector events on [`RaycastInteractor`](/DOC-Unity-InteractionSystem/api/raycastinteractor/)
 
 Every C# event on the interactor has a matching **UnityEvent** you can wire in the Inspector — no subscription code needed for basic setups.
 
 | UnityEvent | Payload type | When it fires |
 |---|---|---|
-| **On Show Actions Discovered** | [`ActionsDiscoveredEventArgs`](/Unity-InteractionSystem/api/actionsdiscoveredeventargs/) | Player aims at an interactable. Use this to show the HUD prompt. |
-| **On Action Selection Changed** | [`ActionSelectionChangedEventArgs`](/Unity-InteractionSystem/api/actionselectionchangedeventargs/) | Player cycles between actions (e.g. scroll wheel). Use this to highlight the current action. |
-| **On Action Executed** | [`ActionExecutedEventArgs`](/Unity-InteractionSystem/api/actionexecutedeventargs/) | An action ran successfully. Use this for audio, screen flash, etc. |
-| **On Interaction Ended** | [`InteractionLifecycleEventArgs`](/Unity-InteractionSystem/api/interactionlifecycleeventargs/) | Player walked away or the action finished. Use this to hide the prompt. |
+| **On Show Actions Discovered** | [`ActionsDiscoveredEventArgs`](/DOC-Unity-InteractionSystem/api/actionsdiscoveredeventargs/) | Player aims at an interactable. Use this to show the HUD prompt. |
+| **On Action Selection Changed** | [`ActionSelectionChangedEventArgs`](/DOC-Unity-InteractionSystem/api/actionselectionchangedeventargs/) | Player cycles between actions (e.g. scroll wheel). Use this to highlight the current action. |
+| **On Action Executed** | [`ActionExecutedEventArgs`](/DOC-Unity-InteractionSystem/api/actionexecutedeventargs/) | An action ran successfully. Use this for audio, screen flash, etc. |
+| **On Interaction Ended** | [`InteractionLifecycleEventArgs`](/DOC-Unity-InteractionSystem/api/interactionlifecycleeventargs/) | Player walked away or the action finished. Use this to hide the prompt. |
 
 ---
 
@@ -216,7 +216,7 @@ Use a subclass only when you need **conditional availability** or **logic beyond
 
 <Tabs>
   <TabItem label="Component action">
-    Extend [`InteractableAction`](/Unity-InteractionSystem/api/interactableaction/) and add it as a component alongside [`InteractableTarget`](/Unity-InteractionSystem/api/interactabletarget/) (which Unity adds automatically).
+    Extend [`InteractableAction`](/DOC-Unity-InteractionSystem/api/interactableaction/) and add it as a component alongside [`InteractableTarget`](/DOC-Unity-InteractionSystem/api/interactabletarget/) (which Unity adds automatically).
 
     ```csharp
     public class MyAction : InteractableAction
@@ -237,9 +237,9 @@ Use a subclass only when you need **conditional availability** or **logic beyond
   </TabItem>
 
   <TabItem label="ScriptableObject action">
-    Extend [`InteractableActionSO`](/Unity-InteractionSystem/api/interactableactionso/) for logic shared across many objects.
+    Extend [`InteractableActionSO`](/DOC-Unity-InteractionSystem/api/interactableactionso/) for logic shared across many objects.
     Create instances via **Assets › Create › FireSoftworks › Interaction › …**
-    and drag them into the **SO Actions** list on any [`InteractableTarget`](/Unity-InteractionSystem/api/interactabletarget/).
+    and drag them into the **SO Actions** list on any [`InteractableTarget`](/DOC-Unity-InteractionSystem/api/interactabletarget/).
 
     ```csharp
     [CreateAssetMenu(menuName = "FireSoftworks/Interaction/My Action SO")]
@@ -257,7 +257,7 @@ Use a subclass only when you need **conditional availability** or **logic beyond
   </TabItem>
 
   <TabItem label="Hybrid Wrapper">
-    Use [`InteractableActionSOWrapper`](/Unity-InteractionSystem/api/interactableactionsowrapper/) when you want **shared SO logic** but **per-instance state**
+    Use [`InteractableActionSOWrapper`](/DOC-Unity-InteractionSystem/api/interactableactionsowrapper/) when you want **shared SO logic** but **per-instance state**
     (e.g. a flag that each object instance tracks independently).
 
     ```csharp
@@ -285,7 +285,7 @@ Use a subclass only when you need **conditional availability** or **logic beyond
 
 ### Reacting to events in code
 
-When your UI manager needs to subscribe programmatically, use the C# events on [`InteractorBase`](/Unity-InteractionSystem/api/interactorbase/) directly:
+When your UI manager needs to subscribe programmatically, use the C# events on [`InteractorBase`](/DOC-Unity-InteractionSystem/api/interactorbase/) directly:
 
 ```csharp
 private void OnEnable()
@@ -328,7 +328,7 @@ The similar-sounding `ActionsDiscovered` has a different role — see the table 
 
 ### Supporting multiple actions and cycling
 
-An object can have any number of actions — component-based and SO-based coexist on the same [`InteractableTarget`](/Unity-InteractionSystem/api/interactabletarget/) with no extra configuration. They are combined and sorted by `Id` automatically.
+An object can have any number of actions — component-based and SO-based coexist on the same [`InteractableTarget`](/DOC-Unity-InteractionSystem/api/interactabletarget/) with no extra configuration. They are combined and sorted by `Id` automatically.
 
 When more than one action is visible, the player can cycle between them:
 
@@ -340,13 +340,13 @@ interactor.SelectPreviousAction();
 
 `SelectNextAction()` and `SelectPreviousAction()` skip unavailable actions automatically,
 so the selection always lands on something that can be executed.
-Each cycle fires [`ActionSelectionChanged`](/Unity-InteractionSystem/api/actionselectionchangedeventargs/) so your HUD can highlight the new selection.
+Each cycle fires [`ActionSelectionChanged`](/DOC-Unity-InteractionSystem/api/actionselectionchangedeventargs/) so your HUD can highlight the new selection.
 
 ---
 
 ### Two-step mode
 
-Enable **Interact To Show Actions** on [`RaycastInteractor`](/Unity-InteractionSystem/api/raycastinteractor/) to change the flow:
+Enable **Interact To Show Actions** on [`RaycastInteractor`](/DOC-Unity-InteractionSystem/api/raycastinteractor/) to change the flow:
 
 | | Default (one-step) | Two-step mode |
 |---|---|---|
@@ -368,8 +368,8 @@ interactor.EndInteraction();    // cancel and clear the current target
 
 Before pressing Play:
 
-- [ ] [`RaycastInteractor`](/Unity-InteractionSystem/api/raycastinteractor/) is on the player — **Player Camera** is assigned.
-- [ ] The interactable object has a **Collider** and at least one [`InteractableAction`](/Unity-InteractionSystem/api/interactableaction/) component (which adds [`InteractableTarget`](/Unity-InteractionSystem/api/interactabletarget/) automatically).
+- [ ] [`RaycastInteractor`](/DOC-Unity-InteractionSystem/api/raycastinteractor/) is on the player — **Player Camera** is assigned.
+- [ ] The interactable object has a **Collider** and at least one [`InteractableAction`](/DOC-Unity-InteractionSystem/api/interactableaction/) component (which adds [`InteractableTarget`](/DOC-Unity-InteractionSystem/api/interactabletarget/) automatically).
 - [ ] Your input code calls `interactor.HandleInteraction()` on the interact button.
 - [ ] **Interactable Mask** includes the layer your objects are on (defaults to *Default* — change to a dedicated layer in production for better performance).
 
@@ -380,18 +380,18 @@ Before pressing Play:
 <CardGrid>
   <Card title="Action types in depth" icon="open-book">
     Trade-offs between Component, SO, and Wrapper actions — and how to structure complex interactables.  
-    [Read the guide →](/Unity-InteractionSystem/guides/actions/)
+    [Read the guide →](/DOC-Unity-InteractionSystem/guides/actions/)
   </Card>
   <Card title="Event system" icon="information">
     All events with their payload types, timing, and common HUD integration patterns.  
-    [Read the guide →](/Unity-InteractionSystem/guides/events/)
+    [Read the guide →](/DOC-Unity-InteractionSystem/guides/events/)
   </Card>
   <Card title="Extending the system" icon="puzzle">
-    Write a custom [`InteractorBase`](/Unity-InteractionSystem/api/interactorbase/) subclass, override detection logic, or integrate with physics triggers.  
-    [Read the guide →](/Unity-InteractionSystem/guides/extending/)
+    Write a custom [`InteractorBase`](/DOC-Unity-InteractionSystem/api/interactorbase/) subclass, override detection logic, or integrate with physics triggers.  
+    [Read the guide →](/DOC-Unity-InteractionSystem/guides/extending/)
   </Card>
   <Card title="API Reference" icon="seti:json">
     Full member-level documentation for every class in the package.  
-    [Browse the API →](/Unity-InteractionSystem/api/)
+    [Browse the API →](/DOC-Unity-InteractionSystem/api/)
   </Card>
 </CardGrid>

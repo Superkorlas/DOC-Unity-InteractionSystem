@@ -18,7 +18,7 @@ public interface IInteractor
 ```
 
 <Aside type="tip">
-Use [`InteractorBase`](/Unity-InteractionSystem/api/interactorbase/) as your starting point when implementing a custom interactor — it provides the full action management and event pipeline. Only implement `IInteractor` directly if you need a completely custom architecture.
+Use [`InteractorBase`](/DOC-Unity-InteractionSystem/api/interactorbase/) as your starting point when implementing a custom interactor — it provides the full action management and event pipeline. Only implement `IInteractor` directly if you need a completely custom architecture.
 </Aside>
 
 ---
@@ -171,4 +171,4 @@ Returns the list of actions that should be visible in the UI, respecting the `Sh
 | `InteractionStarted` | `InteractionLifecycleEventArgs` | A target is first focused |
 | `InteractionEnded` | `InteractionLifecycleEventArgs` | Focus is lost |
 
-See the [Event System guide](/Unity-InteractionSystem/guides/events/) for subscription examples.
+See the [Event System guide](/DOC-Unity-InteractionSystem/guides/events/) for subscription examples.
