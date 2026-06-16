@@ -21,7 +21,7 @@ const BASE = process.env.BASE_PATH ?? '/DOC-Unity-InteractionSystem/';
 
 export default defineConfig({
   site: 'https://Superkorlas.github.io',
-  base: BASE,
+  base: '/DOC-Unity-InteractionSystem/',
 
   integrations: [
     starlight({
