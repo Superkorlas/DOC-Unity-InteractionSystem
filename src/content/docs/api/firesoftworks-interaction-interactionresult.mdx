@@ -1,0 +1,73 @@
+---
+title: "InteractionResult"
+description: "Represents the result of an executed interaction action. Contains a success flag and an optional message describing the outcome. This struct is serializable for logging and debugging purposes."
+sidebar:
+  label: "InteractionResult"
+---
+
+**Namespace:** `FireSoftworks.Interaction`  
+**Assembly:** `FireSoftworks.Interaction`  
+**Type:** Struct  
+
+Represents the result of an executed interaction action.
+Contains a success flag and an optional message describing the outcome.
+This struct is serializable for logging and debugging purposes.
+
+```csharp
+[Serializable]
+public struct InteractionResult
+```
+
+## Methods
+
+### `Fail(string)`
+
+Creates a failed interaction result with an optional error message.
+
+```csharp
+public static InteractionResult Fail(string message = null)
+```
+
+**Parameters**
+
+| Name | Type | Description |
+|---|---|---|
+| `message` | `System.String` | Optional error message explaining why the action failed. |
+
+**Returns:** An InteractionResult marked as failed.  
+
+### `Ok(string)`
+
+Creates a successful interaction result with an optional message.
+
+```csharp
+public static InteractionResult Ok(string message = null)
+```
+
+**Parameters**
+
+| Name | Type | Description |
+|---|---|---|
+| `message` | `System.String` | Optional message describing the successful action. |
+
+**Returns:** An InteractionResult marked as successful.  
+
+## Fields
+
+### `Message`
+
+Optional message providing additional information about the result.
+Useful for debugging or displaying feedback to the player.
+
+```csharp
+public string Message
+```
+
+### `Success`
+
+Indicates whether the action executed successfully.
+
+```csharp
+public bool Success
+```
+

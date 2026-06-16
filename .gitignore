@@ -1,0 +1,18 @@
+# Build output
+dist/
+.astro/
+
+# Dependencies
+node_modules/
+
+# DocFX intermediate files
+docfx-metadata/
+docfx_project/
+
+# Environment
+.env
+.env.local
+
+# OS
+.DS_Store
+Thumbs.db

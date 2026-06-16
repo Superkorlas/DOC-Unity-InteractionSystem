@@ -1,0 +1,19 @@
+---
+title: "InteractionLifecycleUnityEvent"
+description: "Serializable  wrapper for . Expose this in the Inspector to wire callbacks for interaction start and end lifecycle events."
+sidebar:
+  label: "InteractionLifecycleUnityEvent"
+---
+
+**Namespace:** `FireSoftworks.Interaction`  
+**Assembly:** `FireSoftworks.Interaction`  
+**Type:** Class  
+
+Serializable  wrapper for .
+Expose this in the Inspector to wire callbacks for interaction start and end lifecycle events.
+
+```csharp
+[Serializable]
+public class InteractionLifecycleUnityEvent : UnityEvent<InteractionLifecycleEventArgs>, ISerializationCallbackReceiver
+```
+

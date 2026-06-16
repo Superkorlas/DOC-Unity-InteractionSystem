@@ -1,0 +1,78 @@
+---
+title: ActionsDiscoveredEventArgs
+description: Event arguments passed when a new set of actions is discovered after the player focuses on an interactable.
+sidebar:
+  label: ActionsDiscoveredEventArgs
+---
+
+**Namespace:** `FireSoftworks.Interaction`  
+**Type:** Class  
+**Assembly:** `FireSofworks.InteractionSystem`
+
+Payload for the `IInteractor.ActionsDiscovered` and `IInteractor.ShowActionsDiscovered` C# events, and their corresponding UnityEvents. Fired when the player focuses on a new interactable and the action list is built.
+
+```csharp
+public class ActionsDiscoveredEventArgs
+```
+
+---
+
+## Constructor
+
+```csharp
+public ActionsDiscoveredEventArgs(
+    IInteractable                    target,
+    IReadOnlyList<IInteractableAction> actions,
+    InteractionContext               context)
+```
+
+---
+
+## Fields
+
+### `Target`
+
+```csharp
+public readonly IInteractable Target;
+```
+
+The interactable object that was focused.
+
+---
+
+### `Actions`
+
+```csharp
+public readonly IReadOnlyList<IInteractableAction> Actions;
+```
+
+The visible action list for this target — already filtered by `ShowWhenUnavailable` and sorted by `Id`. Use this list to populate your HUD.
+
+---
+
+### `Context`
+
+```csharp
+public readonly InteractionContext Context;
+```
+
+The interaction context at the moment of discovery.
+
+---
+
+## Usage
+
+```csharp
+interactor.ActionsDiscovered += (ActionsDiscoveredEventArgs args) =>
+{
+    hud.Populate(args.Actions);
+    hud.SetTarget(args.Target.GetGameObject().name);
+};
+```
+
+### `ActionsDiscovered` vs `ShowActionsDiscovered`
+
+| Event | When it fires |
+|---|---|
+| `ActionsDiscovered` | As soon as a new target is focused — always. Use for background setup (cache, audio cue). |
+| `ShowActionsDiscovered` | When the action menu should be **displayed** to the player. With `interactToShowActions = false` this fires immediately; with `interactToShowActions = true` it fires only after the player presses the interaction key. |

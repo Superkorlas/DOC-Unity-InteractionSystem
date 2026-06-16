@@ -1,0 +1,56 @@
+---
+title: Interaction System
+description: A lightweight, production-ready interaction system for Unity — camera-agnostic, input-agnostic, and event-driven.
+template: splash
+hero:
+  tagline: A lightweight, production-ready interaction system for Unity. Entirely camera-agnostic and input-agnostic, it allows you to build flexible gameplay interactions using a clean, event-driven architecture with zero external dependencies.
+  actions:
+    - text: Quick Start
+      link: /Unity-InteractionSystem/quick-start/
+      icon: right-arrow
+      variant: primary
+    - text: API Reference
+      link: /Unity-InteractionSystem/api/
+      icon: open-book
+---
+
+import { Card, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+## 🚀 Key Features
+
+<CardGrid stagger>
+  <Card title="Flexible Architecture" icon="puzzle">
+    Supports **Component-based**, **ScriptableObject-based**, and **Hybrid wrapper** actions. Mix and match based on your state persistence requirements.
+  </Card>
+  <Card title="Mixed Discovery" icon="seti:code-search">
+    Automatically scans, sorts, and lists both components and ScriptableObjects sitting on the same interactable target.
+  </Card>
+  <Card title="Event-Driven Lifecycle" icon="setting">
+    Rich C# and UnityEvents for discovery, selection tracking, execution, and focus loss — perfect for driving your custom UI, audio, or animation states.
+  </Card>
+  <Card title="Camera-Agnostic Raycasting" icon="seti:camera">
+    Built-in decoupled raycast detection with customizable LayerMask filtering. Works out of the box with First-Person, Third-Person, or Top-down viewports.
+  </Card>
+  <Card title="Extremely Lightweight" icon="approve-check-circle">
+    Completely standalone. No forced dependencies on specific UI frameworks, physics setups, or inventory systems. Clean code that integrates seamlessly into your existing codebase.
+  </Card>
+</CardGrid>
+
+---
+
+## Package info
+
+| Property | Value |
+|---|---|
+| Package name | `individual.alejandro-de-la-plata-ramos.interaction-system` |
+| Unity version | 6000.0+ |
+| Namespace | `FireSoftworks.Interaction` |
+| License | See `LICENSE.md` |
+
+---
+
+<LinkCard
+  title="Get started in 5 minutes →"
+  description="Set up a working interactable object from scratch."
+  href="/Unity-InteractionSystem/quick-start/"
+/>

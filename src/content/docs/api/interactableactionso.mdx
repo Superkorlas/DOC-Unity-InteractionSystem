@@ -1,0 +1,104 @@
+---
+title: InteractableActionSO
+description: Abstract ScriptableObject base for reusable, shared-logic interaction actions.
+sidebar:
+  label: InteractableActionSO
+---
+
+**Namespace:** `FireSoftworks.Interaction`  
+**Type:** Abstract class · ScriptableObject  
+**Assembly:** `FireSofworks.InteractionSystem`  
+**Implements:** `IInteractableAction`
+
+Abstract ScriptableObject base for reusable, data-driven actions. Create one asset and assign it to many `InteractableTarget.soActions` lists — no component duplication per object.
+
+```csharp
+public class InteractableActionSO : ScriptableObject, IInteractableAction
+```
+
+---
+
+## Creating an SO action
+
+```csharp
+[CreateAssetMenu(
+    menuName = "FireSoftworks/Interaction/Inspect Action SO",
+    fileName = "InspectActionSO")]
+public class InspectActionSO : InteractableActionSO
+{
+    [SerializeField] private string _text = "Nothing special here.";
+
+    public override bool IsAvailable(InteractionContext context) => true;
+
+    public override void Execute(InteractionContext context)
+    {
+        Debug.Log(_text);
+        OnExecuted?.Invoke(context);
+    }
+}
+```
+
+Then right-click in the Project window → **Create › FireSoftworks › Interaction › Inspect Action SO** to create an asset, and drag it into any `InteractableTarget`'s **SO Actions** list.
+
+---
+
+## Inspector fields
+
+| Field | Type | Description |
+|---|---|---|
+| `id` | `string` | Technical identifier (default `"action"`). |
+| `displayName` | `string` | HUD label (default `"Action"`). |
+| `icon` | `Sprite` | Optional HUD icon. |
+| `onExecuted` | `UnityEvent<InteractionContext>` | Shared callbacks wired on the asset. |
+
+---
+
+## Properties
+
+### `Id`
+```csharp
+public string Id { get; }
+```
+
+### `Label`
+```csharp
+public string Label { get; }
+```
+
+### `Icon`
+```csharp
+public Sprite Icon { get; }
+```
+
+### `ShowWhenUnavailable`
+```csharp
+public virtual bool ShowWhenUnavailable { get; }
+```
+Returns `true` by default.
+
+### `OnExecuted`
+```csharp
+public UnityEvent<InteractionContext> OnExecuted { get; }
+```
+
+---
+
+## Virtual methods
+
+### `IsAvailable(InteractionContext)`
+```csharp
+public virtual bool IsAvailable(InteractionContext context)
+```
+Default: returns `true`. Override to add shared availability logic.
+
+### `Execute(InteractionContext)`
+```csharp
+public virtual void Execute(InteractionContext context)
+```
+Default: invokes `OnExecuted`. Override with your shared action logic.
+
+---
+
+## Per-instance state
+
+SO assets are shared — they cannot store per-object state safely. If you need per-instance state (e.g., a "used" flag per chest), use [`InteractableActionSOWrapper`](/Unity-InteractionSystem/api/interactableactionsowrapper/) instead.

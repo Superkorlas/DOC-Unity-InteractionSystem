@@ -1,0 +1,82 @@
+---
+title: IInteractable
+description: Interface for objects that can be interacted with by the player.
+sidebar:
+  label: IInteractable
+---
+
+**Namespace:** `FireSoftworks.Interaction`  
+**Type:** Interface  
+**Assembly:** `FireSofworks.InteractionSystem`
+
+Interface for world objects that can surface one or more `IInteractableAction` implementations to the player. Implement this on any MonoBehaviour that should be detectable and interactable.
+
+```csharp
+public interface IInteractable
+```
+
+The default implementation is [`InteractableTarget`](/Unity-InteractionSystem/api/interactabletarget/). Implement `IInteractable` directly only when you need full control over action discovery (e.g., a networked entity, a procedurally generated object).
+
+---
+
+## Methods
+
+### `GetGameObject()`
+
+```csharp
+GameObject GetGameObject()
+```
+
+Returns the `GameObject` associated with this interactable. Required by the interactor to get a reference to the scene object (e.g., for highlighting).
+
+---
+
+### `GetAvailableActions(InteractionContext)`
+
+```csharp
+List<IInteractableAction> GetAvailableActions(InteractionContext context)
+```
+
+Returns only the actions that are currently available given the context. The list should be sorted by `IInteractableAction.Id` for consistent ordering.
+
+| Parameter | Type | Description |
+|---|---|---|
+| `context` | `InteractionContext` | The current interaction context. |
+
+**Returns:** Sorted list of available `IInteractableAction` instances.
+
+---
+
+### `GetAllActions()`
+
+```csharp
+List<IInteractableAction> GetAllActions()
+```
+
+Returns **all** actions on this interactable, including unavailable ones. Used by `InteractorBase` to build the full visible action list (filtering is done based on `ShowWhenUnavailable`). The list should be sorted by `Id`.
+
+**Returns:** Sorted list of all `IInteractableAction` instances.
+
+---
+
+### `OnFocusEnter(InteractionContext)`
+
+```csharp
+void OnFocusEnter(InteractionContext context)
+```
+
+Called when an `IInteractor` first focuses on this object. Use to trigger entry animations, sounds, or highlight effects.
+
+| Parameter | Type | Description |
+|---|---|---|
+| `context` | `InteractionContext` | The interaction context of the focusing interactor. |
+
+---
+
+### `OnFocusExit()`
+
+```csharp
+void OnFocusExit()
+```
+
+Called when the interactor stops focusing on this object. Use to undo effects applied in `OnFocusEnter` and clean up cached state.

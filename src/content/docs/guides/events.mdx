@@ -1,0 +1,160 @@
+---
+title: Event System
+description: Full reference for every C# event and UnityEvent exposed by the Interaction System.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+The Interaction System uses two complementary event layers:
+
+- **C# events** (`event Action<TArgs>`) — for code-side subscriptions with full type safety and zero Inspector setup.
+- **UnityEvents** (`SerializedField`) — for Inspector-wired callbacks, usable by designers without code.
+
+Both layers fire for the same lifecycle points.
+
+---
+
+## IInteractor C# events
+
+All events are defined on `IInteractor` and implemented in `InteractorBase`.
+
+### `InteractionStarted`
+
+Fires when the player first focuses on an interactable target.
+
+```csharp
+interactor.InteractionStarted += (InteractionLifecycleEventArgs args) =>
+{
+    // args.Target — the IInteractable that was focused
+    // args.Context — the current InteractionContext
+    highlightOutline.Enable(args.Target.GetGameObject());
+};
+```
+
+### `ActionsDiscovered`
+
+Fires after focus is established and the action list has been built. Carries the full (visible) action list.
+
+```csharp
+interactor.ActionsDiscovered += (ActionsDiscoveredEventArgs args) =>
+{
+    // args.Target — the focused IInteractable
+    // args.Actions — List<IInteractableAction> of visible actions
+    // args.Context — the current InteractionContext
+    hud.ShowActionMenu(args.Actions);
+};
+```
+
+### `ShowActionsDiscovered`
+
+Fires specifically when the player enters "show actions" mode (by calling `ShowInteractions()`). Use this to display the selection UI; `ActionsDiscovered` fires earlier and is better for background setup.
+
+### `ActionSelectionChanged`
+
+Fires whenever the selected action index changes (cycling with `SelectNextAction` / `SelectPreviousAction`).
+
+```csharp
+interactor.ActionSelectionChanged += (ActionSelectionChangedEventArgs args) =>
+{
+    // args.Target — the focused IInteractable
+    // args.Action — the newly selected IInteractableAction
+    // args.Index — its index in the visible actions list
+    hud.HighlightAction(args.Index);
+};
+```
+
+### `ActionExecuted`
+
+Fires after an action has been executed successfully.
+
+```csharp
+interactor.ActionExecuted += (ActionExecutedEventArgs args) =>
+{
+    // args.Target — the IInteractable
+    // args.Action — the IInteractableAction that ran
+    // args.Result — InteractionResult (Success, Failed, NotAvailable)
+    audioSource.PlayOneShot(executeClip);
+};
+```
+
+### `InteractionEnded`
+
+Fires when focus is lost (player looks away, `EndInteraction()` is called, or the target is destroyed).
+
+```csharp
+interactor.InteractionEnded += (InteractionLifecycleEventArgs args) =>
+{
+    hud.HideActionMenu();
+    highlightOutline.Disable();
+};
+```
+
+---
+
+## IInteractor UnityEvents
+
+The same lifecycle points are exposed as serializable `UnityEvent` fields in the Inspector on `InteractorBase`:
+
+| Inspector field | Equivalent C# event |
+|---|---|
+| `onInteractionStarted` | `InteractionStarted` |
+| `onActionsDiscovered` | `ActionsDiscovered` |
+| `onShowActionsDiscovered` | `ShowActionsDiscovered` |
+| `onActionSelectionChanged` | `ActionSelectionChanged` |
+| `onActionExecuted` | `ActionExecuted` |
+| `onInteractionEnded` | `InteractionEnded` |
+
+Drag any component method to these fields in the Inspector without writing any code.
+
+---
+
+## IInteractableAction.OnExecuted
+
+Every action type (`InteractableAction`, `InteractableActionSO`, and wrappers) has a single `OnExecuted` UnityEvent that fires immediately after `Execute()` completes.
+
+Use it for per-action feedback that doesn't need to go through the main interactor pipeline (e.g., a particle burst tied to a specific pickup, audio on a door open).
+
+<Aside type="caution">
+`OnExecuted` fires **before** `ActionExecuted` on the interactor. If you need to react to the full result (including `InteractionResult`), subscribe to `ActionExecuted` instead.
+</Aside>
+
+---
+
+## Event args reference
+
+### `InteractionLifecycleEventArgs`
+
+| Property | Type | Description |
+|---|---|---|
+| `Target` | `IInteractable` | The focused interactable |
+| `Context` | `InteractionContext` | Current interaction context |
+
+### `ActionsDiscoveredEventArgs`
+
+| Property | Type | Description |
+|---|---|---|
+| `Target` | `IInteractable` | The focused interactable |
+| `Actions` | `List<IInteractableAction>` | Visible (filtered) actions |
+| `Context` | `InteractionContext` | Current interaction context |
+
+### `ActionSelectionChangedEventArgs`
+
+| Property | Type | Description |
+|---|---|---|
+| `Target` | `IInteractable` | The focused interactable |
+| `Action` | `IInteractableAction` | Newly selected action |
+| `Index` | `int` | Index in the visible actions list |
+
+### `ActionExecutedEventArgs`
+
+| Property | Type | Description |
+|---|---|---|
+| `Target` | `IInteractable` | The focused interactable |
+| `Action` | `IInteractableAction` | Action that was executed |
+| `Result` | `InteractionResult` | Outcome of execution |
+
+### `InteractionContext`
+
+| Property | Type | Description |
+|---|---|---|
+| `Interactor` | `IInteractor` | The interactor that initiated the interaction |

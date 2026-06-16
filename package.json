@@ -1,0 +1,23 @@
+{
+  "name": "interaction-system-docs",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "build:api": "node scripts/docfx-to-starlight.mjs",
+    "build:all": "npm run build:api && npm run build"
+  },
+  "dependencies": {
+    "@astrojs/starlight": "^0.32.0",
+    "astro": "^5.7.0",
+    "sharp": "^0.33.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0",
+    "js-yaml": "^4.1.0"
+  }
+}

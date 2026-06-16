@@ -1,0 +1,91 @@
+/*
+ * Interaction System Docs — Custom Theme
+ *
+ * Mirrors the portfolio palette defined in:
+ *   about-me/public/theme.css  (local: http://localhost:4321/about-me/theme.css)
+ *   Production: https://Superkorlas.github.io/about-me/theme.css
+ *
+ * This file is loaded *after* Starlight's built-in CSS via the `customCss`
+ * option, so these variables correctly override Starlight's defaults.
+ *
+ * The portfolio theme is also injected at runtime via <head> in astro.config.mjs.
+ * This file provides the same variables as a reliable fallback that works even
+ * when the portfolio is not running locally.
+ */
+
+/* ── Starlight colour overrides ───────────────────────────────────────── */
+:root,
+::backdrop {
+  /* Accent — Indigo palette from the portfolio */
+  --sl-color-accent-low:  #1e1b4b;
+  --sl-color-accent:      #6366f1;
+  --sl-color-accent-high: #c7d2fe;
+
+  /* Greys */
+  --sl-color-white:   #ffffff;
+  --sl-color-gray-1:  #e2e8f0;
+  --sl-color-gray-2:  #cbd5e1;
+  --sl-color-gray-3:  #94a3b8;
+  --sl-color-gray-4:  #64748b;
+  --sl-color-gray-5:  #475569;
+  --sl-color-gray-6:  #1e293b;
+  --sl-color-black:   #0f172a;
+
+  /* Background / text mappings (dark mode is Starlight's default) */
+  --sl-color-bg:          var(--sl-color-black);
+  --sl-color-bg-nav:      var(--sl-color-gray-6);
+  --sl-color-text:        var(--sl-color-gray-2);
+  --sl-color-text-accent: var(--sl-color-accent-high);
+
+  /* Typography — match portfolio font stack */
+  --sl-font: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* ── Shared glass-panel component ─────────────────────────────────────── */
+.glass-panel {
+  background: rgba(30, 41, 59, 0.5);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--sl-color-gray-5);
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.glass-panel:hover {
+  background: rgba(71, 85, 105, 0.4);
+  border-color: var(--sl-color-gray-4);
+  transform: translateY(-2px);
+}
+
+/* ── Starlight card / aside tweaks ───────────────────────────────────── */
+starlight-card,
+.sl-card {
+  border-color: var(--sl-color-gray-5);
+  background: rgba(30, 41, 59, 0.4);
+}
+
+/* ── Gradient text utility (matches portfolio .text-gradient) ─────────── */
+.text-gradient {
+  background: linear-gradient(135deg, var(--sl-color-accent-high), var(--sl-color-accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Pill tag (matches portfolio .tag) ───────────────────────────────── */
+.tag {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.875rem;
+  border-radius: 9999px;
+  background: rgba(99, 102, 241, 0.15);
+  color: var(--sl-color-accent-high);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+}
+
+/* ── Code block accent ───────────────────────────────────────────────── */
+:root {
+  --astro-code-color-background: #0d1117;
+  --astro-code-token-keyword: var(--sl-color-accent-high);
+}

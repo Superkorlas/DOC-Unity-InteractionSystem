@@ -1,0 +1,133 @@
+---
+title: Action Types
+description: When to use Component-based, ScriptableObject, or Hybrid Wrapper actions — and the trade-offs of each.
+---
+
+import { Aside, Card, CardGrid, Tabs, TabItem } from '@astrojs/starlight/components';
+
+The Interaction System provides three ways to implement actions, each designed for a different combination of **reusability** and **per-instance state**. All three implement `IInteractableAction` and are discovered transparently by `InteractableTarget`.
+
+---
+
+## Decision guide
+
+| Need | Use |
+|---|---|
+| Per-object serialized state, scene references | **Component** (`InteractableAction`) |
+| Shared logic, data-driven, no per-instance state | **ScriptableObject** (`InteractableActionSO`) |
+| Reusable SO logic **and** per-object state | **Hybrid Wrapper** (`InteractableActionSOWrapper`) |
+| Simple inspector-driven callback, no subclass | **OnExecuted UnityEvent** (on any action type) |
+
+---
+
+## Component-based — `InteractableAction`
+
+`InteractableAction` is an abstract `MonoBehaviour`. Subclass it and attach it directly to the same `GameObject` as `InteractableTarget`.
+
+**Use when:**
+- The action needs per-object serialized data (health points, open/closed state, references to other scene objects).
+- The action's behaviour is unique enough that sharing it across many objects doesn't make sense.
+
+**Pros:** Direct access to the `GameObject` and its components; Unity serialization just works.  
+**Cons:** One component instance per object means less reuse across many objects.
+
+```csharp
+public class DoorOpenAction : InteractableAction
+{
+    [SerializeField] private Animator _doorAnimator;
+
+    public override bool IsAvailable(InteractionContext context) => !_isOpen;
+
+    public override void Execute(InteractionContext context)
+    {
+        _isOpen = true;
+        _doorAnimator.SetTrigger("Open");
+        OnExecuted?.Invoke(context);
+    }
+
+    private bool _isOpen;
+}
+```
+
+---
+
+## ScriptableObject-based — `InteractableActionSO`
+
+`InteractableActionSO` is an abstract `ScriptableObject`. Create asset instances and assign them to the **SO Actions** list on `InteractableTarget`.
+
+**Use when:**
+- The same behaviour applies to many objects (a generic "Inspect" text, a sound effect trigger, a stateless loot roll).
+- You want to tune parameters centrally in one place.
+
+**Pros:** One asset, many interactables — zero component overhead per object.  
+**Cons:** Cannot safely hold per-instance state. All objects sharing the SO share its fields.
+
+```csharp
+[CreateAssetMenu(menuName = "FireSoftworks/Interaction/Inspect Action SO")]
+public class InspectActionSO : InteractableActionSO
+{
+    [SerializeField] private string _inspectText;
+
+    public override bool IsAvailable(InteractionContext context) => true;
+
+    public override void Execute(InteractionContext context)
+    {
+        Debug.Log(_inspectText);
+        OnExecuted?.Invoke(context);
+    }
+}
+```
+
+---
+
+## Hybrid Wrapper — `InteractableActionSOWrapper`
+
+`InteractableActionSOWrapper` is an abstract `MonoBehaviour` that delegates `IsAvailable` and `Execute` to an assigned `InteractableActionSO` while storing per-instance state locally.
+
+**Use when:**
+- You want shared SO logic but need each object to track its own state (a single-use item, per-chest loot tracking).
+
+**Pros:** Reusability of SO behaviour + per-object serialized state.  
+**Cons:** Requires one wrapper component per `GameObject` instance.
+
+```csharp
+public class SingleUseActionSOWrapper : InteractableActionSOWrapper
+{
+    private bool _used;
+
+    public override bool IsAvailable(InteractionContext context)
+        => !_used && base.IsAvailable(context);
+
+    public override void Execute(InteractionContext context)
+    {
+        _used = true;
+        base.Execute(context);
+    }
+}
+```
+
+---
+
+## OnExecuted UnityEvent
+
+Every action type (`InteractableAction`, `InteractableActionSO`, and wrappers) exposes an `OnExecuted` UnityEvent in the Inspector. Use it for lightweight callbacks without creating a subclass:
+
+- Trigger a particle system when a pickup is collected.
+- Play a sound when a button is pressed.
+- Enable/disable a UI panel on execution.
+
+<Aside type="tip">
+`OnExecuted` receives an `InteractionContext` argument. The context contains a reference to the `IInteractor` that triggered the action, useful for targeting the correct player in multiplayer scenarios.
+</Aside>
+
+---
+
+## Transparent mixed discovery
+
+`InteractableTarget` discovers all action types on the same object in one pass:
+
+1. `GetComponents<IInteractableAction>()` — finds all `InteractableAction` components.
+2. The `soActions` list — includes all `InteractableActionSO` assets assigned in the Inspector.
+3. The merged list is sorted by `IInteractableAction.Id` for consistent display order.
+
+You can freely mix component and SO actions on the same object. The `Interactor` sees a single unified list and does not care about the source type.

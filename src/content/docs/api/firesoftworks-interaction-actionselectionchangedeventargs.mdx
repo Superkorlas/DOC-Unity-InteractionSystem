@@ -1,0 +1,63 @@
+---
+title: "ActionSelectionChangedEventArgs"
+description: "Event arguments for when the selected action changes on an interactor. Contains information about the target, the new selected index, and the action."
+sidebar:
+  label: "ActionSelectionChangedEventArgs"
+---
+
+**Namespace:** `FireSoftworks.Interaction`  
+**Assembly:** `FireSoftworks.Interaction`  
+**Type:** Class  
+
+Event arguments for when the selected action changes on an interactor.
+Contains information about the target, the new selected index, and the action.
+
+```csharp
+public class ActionSelectionChangedEventArgs
+```
+
+## Constructors
+
+### `ActionSelectionChangedEventArgs(IInteractable, int, IInteractableAction)`
+
+Initializes a new instance of the ActionSelectionChangedEventArgs class.
+
+```csharp
+public ActionSelectionChangedEventArgs(IInteractable target, int index, IInteractableAction action)
+```
+
+**Parameters**
+
+| Name | Type | Description |
+|---|---|---|
+| `target` | `FireSoftworks.Interaction.IInteractable` | The interactable target where the selection changed. |
+| `index` | `System.Int32` | The index of the selected action. |
+| `action` | `FireSoftworks.Interaction.IInteractableAction` | The selected action, or null if none. |
+
+## Fields
+
+### `Action`
+
+The newly selected action, or null if no action is selected.
+
+```csharp
+public readonly IInteractableAction Action
+```
+
+### `Index`
+
+The index of the newly selected action in the actions list.
+-1 if no action is selected.
+
+```csharp
+public readonly int Index
+```
+
+### `Target`
+
+The interactable target where the action selection changed.
+
+```csharp
+public readonly IInteractable Target
+```
+

@@ -1,0 +1,52 @@
+---
+title: "InteractionComponentCreator"
+description: "Editor utilities for creating Interaction System components."
+sidebar:
+  label: "InteractionComponentCreator"
+---
+
+**Namespace:** `FireSoftworks.Interaction.Editor`  
+**Assembly:** `FireSoftworks.Interaction.Editor`  
+**Type:** Class  
+
+Editor utilities for creating Interaction System components.
+
+```csharp
+public static class InteractionComponentCreator
+```
+
+## Methods
+
+### `AddComponentToSelected<T>(string)`
+
+```csharp
+public static void AddComponentToSelected<T>(string defaultName) where T : Component
+```
+
+**Parameters**
+
+| Name | Type | Description |
+|---|---|---|
+| `defaultName` | `System.String` |  |
+
+### `ComponentAddInteractableAction()`
+
+```csharp
+[MenuItem("Component/FireSoftworks/Interaction/Interactable Action", false, 10)]
+public static void ComponentAddInteractableAction()
+```
+
+### `ComponentAddInteractableActionSOWrapper()`
+
+```csharp
+[MenuItem("Component/FireSoftworks/Interaction/SO Wrapper/Interactable Action SO Wrapper", false, 10)]
+public static void ComponentAddInteractableActionSOWrapper()
+```
+
+### `ComponentAddRaycastInteractor()`
+
+```csharp
+[MenuItem("Component/FireSoftworks/Interaction/Raycast Interactor", false, 10)]
+public static void ComponentAddRaycastInteractor()
+```
+

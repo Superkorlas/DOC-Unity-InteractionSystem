@@ -1,0 +1,55 @@
+---
+title: InteractionLifecycleEventArgs
+description: Event arguments for interaction lifecycle events — fired when focus begins or ends.
+sidebar:
+  label: InteractionLifecycleEventArgs
+---
+
+**Namespace:** `FireSoftworks.Interaction`  
+**Type:** Class  
+**Assembly:** `FireSofworks.InteractionSystem`
+
+Payload for `IInteractor.InteractionStarted` and `IInteractor.InteractionEnded` C# events, and the corresponding `onInteractionStarted` / `onInteractionEnded` UnityEvents.
+
+```csharp
+public class InteractionLifecycleEventArgs
+```
+
+---
+
+## Constructor
+
+```csharp
+public InteractionLifecycleEventArgs(IInteractable target)
+```
+
+---
+
+## Fields
+
+### `Target`
+
+```csharp
+public readonly IInteractable Target;
+```
+
+The interactable involved in the lifecycle event.
+
+---
+
+## Usage
+
+```csharp
+interactor.InteractionStarted += (InteractionLifecycleEventArgs args) =>
+{
+    highlightOutline.Enable(args.Target.GetGameObject());
+    crosshair.SetInteractState(true);
+};
+
+interactor.InteractionEnded += (InteractionLifecycleEventArgs args) =>
+{
+    highlightOutline.Disable();
+    crosshair.SetInteractState(false);
+    hud.HideActionMenu();
+};
+```

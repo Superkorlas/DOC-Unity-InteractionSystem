@@ -1,0 +1,115 @@
+---
+title: InteractableTarget
+description: Default IInteractable component. Aggregates component-based and ScriptableObject-based actions with automatic caching and sorting.
+sidebar:
+  label: InteractableTarget
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+**Namespace:** `FireSoftworks.Interaction`  
+**Type:** Class · MonoBehaviour  
+**Assembly:** `FireSofworks.InteractionSystem`  
+**Implements:** `IInteractable`  
+**Constraint:** `[DisallowMultipleComponent]`
+
+Default implementation of `IInteractable`. Aggregates interaction actions from attached `IInteractableAction` components and from manually assigned `InteractableActionSO` assets, caches the merged list, and sorts it by `Id`.
+
+```csharp
+[DisallowMultipleComponent]
+public class InteractableTarget : MonoBehaviour, IInteractable
+```
+
+---
+
+## Setup
+
+1. Add `InteractableTarget` to any GameObject with a Collider.
+2. *(Optional)* Assign SO action assets to the **SO Actions** list in the Inspector.
+3. Add `InteractableAction` components (or `InteractableActionSOWrapper` components) to the same GameObject for component-based actions.
+4. *(Optional)* Assign a **Focused Material** for automatic outline/highlight on focus.
+
+---
+
+## Inspector fields
+
+| Field | Type | Description |
+|---|---|---|
+| `soActions` | `List<InteractableActionSO>` | ScriptableObject actions assigned manually. Combined with component-based actions. |
+| `focusedMaterial` | `Material` | Applied as an extra material layer when the player focuses on this object. Removed on `OnFocusExit()`. |
+
+---
+
+## Methods
+
+### `GetGameObject()`
+
+```csharp
+public GameObject GetGameObject()
+```
+
+Returns `gameObject`.
+
+---
+
+### `GetAvailableActions(InteractionContext)`
+
+```csharp
+public List<IInteractableAction> GetAvailableActions(InteractionContext context)
+```
+
+Returns actions for which `IsAvailable(context)` returns `true`, sorted by `Id` ascending. Populates the cache on first call.
+
+---
+
+### `GetAllActions()`
+
+```csharp
+public List<IInteractableAction> GetAllActions()
+```
+
+Returns all actions regardless of availability, sorted by `Id` ascending. Used by `InteractorBase` to build the full visible list. Populates the cache on first call.
+
+---
+
+### `RefreshActions()`
+
+```csharp
+public void RefreshActions()
+```
+
+Clears the cached action list, forcing rediscovery on the next `GetAllActions()` / `GetAvailableActions()` call. Call this if you add or remove action components at runtime.
+
+<Aside type="note">
+`RefreshActions()` is called automatically inside `OnFocusExit()`, so each new focus starts with a clean cache.
+</Aside>
+
+---
+
+### `OnFocusEnter(InteractionContext)`
+
+```csharp
+public void OnFocusEnter(InteractionContext context)
+```
+
+If `focusedMaterial` is assigned, appends it to the object's `Renderer.materials` array for the duration of the focus, creating a highlight effect without replacing original materials.
+
+---
+
+### `OnFocusExit()`
+
+```csharp
+public void OnFocusExit()
+```
+
+Restores the original materials array and calls `RefreshActions()`.
+
+---
+
+## Action discovery order
+
+1. `GetComponents<IInteractableAction>()` — discovers all attached MonoBehaviour actions.
+2. `soActions` list — appends all assigned SO assets.
+3. The merged list is sorted by `IInteractableAction.Id` (ascending, string comparison).
+
+All three action types (`InteractableAction`, `InteractableActionSO`, `InteractableActionSOWrapper`) are picked up transparently in step 1 or 2.

@@ -1,0 +1,110 @@
+---
+title: IInteractableAction
+description: Interface representing a single, reusable interaction action such as Consume, Pickup, Open, etc.
+sidebar:
+  label: IInteractableAction
+---
+
+**Namespace:** `FireSoftworks.Interaction`  
+**Type:** Interface  
+**Assembly:** `FireSofworks.InteractionSystem`
+
+Interface representing a single, reusable interaction action. Examples: Consume, Pickup, Read, Open. Implement this interface directly, or inherit from one of the provided base classes.
+
+```csharp
+public interface IInteractableAction
+```
+
+**Base class options:**
+
+| Class | When to use |
+|---|---|
+| [`InteractableAction`](/Unity-InteractionSystem/api/interactableaction/) | Component (MonoBehaviour) with per-object state |
+| [`InteractableActionSO`](/Unity-InteractionSystem/api/interactableactionso/) | ScriptableObject with shared/reusable logic |
+| [`InteractableActionSOWrapper`](/Unity-InteractionSystem/api/interactableactionsowrapper/) | MonoBehaviour delegating to an SO |
+
+---
+
+## Properties
+
+### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Stable technical identifier for this action (e.g., `"consume"`, `"pickup"`). Used internally for sorting (actions are sorted by `Id` ascending) and programmatic identification.
+
+---
+
+### `Label`
+
+```csharp
+string Label { get; }
+```
+
+Human-readable label for UI display (e.g., `"Eat Apple"`, `"Pick Up Item"`). Displayed in the HUD when this action is selected.
+
+---
+
+### `Icon`
+
+```csharp
+Sprite Icon { get; }
+```
+
+Optional sprite/icon displayed to the left of the action label in the HUD. Returns `null` if no icon is configured — HUD should fall back to label-only display.
+
+---
+
+### `ShowWhenUnavailable`
+
+```csharp
+bool ShowWhenUnavailable { get; }
+```
+
+When `true` (the default), this action appears in the HUD even when `IsAvailable()` returns `false`, typically rendered grayed out. Set to `false` to completely hide the action from UI when unavailable.
+
+This only affects **visibility** — it has no impact on selection or execution logic.
+
+---
+
+### `OnExecuted`
+
+```csharp
+UnityEvent<InteractionContext> OnExecuted { get; }
+```
+
+Optional serializable UnityEvent fired after the action executes. Assign callbacks in the Inspector without writing code.
+
+---
+
+## Methods
+
+### `IsAvailable(InteractionContext)`
+
+```csharp
+bool IsAvailable(InteractionContext context)
+```
+
+Determines whether this action can be executed in the given context. The default interface implementation returns `true` unconditionally. Override in subclasses to add conditional logic.
+
+| Parameter | Type | Description |
+|---|---|---|
+| `context` | `InteractionContext` | The current interaction context. |
+
+**Returns:** `true` if the action can be executed; `false` otherwise.
+
+---
+
+### `Execute(InteractionContext)`
+
+```csharp
+void Execute(InteractionContext context)
+```
+
+Executes the action logic. The default interface implementation calls `OnExecuted?.Invoke(context)`. Override in subclasses to implement specific behaviour.
+
+| Parameter | Type | Description |
+|---|---|---|
+| `context` | `InteractionContext` | The current interaction context. |

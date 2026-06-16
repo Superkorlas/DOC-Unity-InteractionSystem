@@ -1,0 +1,83 @@
+---
+title: "IInteractable"
+description: "Interface for objects that can be interacted with by the player. Implement this interface on any object that should support player interactions."
+sidebar:
+  label: "IInteractable"
+---
+
+**Namespace:** `FireSoftworks.Interaction`  
+**Assembly:** `FireSoftworks.Interaction`  
+**Type:** Interface  
+
+Interface for objects that can be interacted with by the player.
+Implement this interface on any object that should support player interactions.
+
+```csharp
+public interface IInteractable
+```
+
+## Methods
+
+### `GetAllActions()`
+
+Returns ALL actions on this interactable (both available and unavailable).
+This is used for UI display to show the complete action set.
+The returned list is usually sorted by action ID for consistent ordering.
+
+```csharp
+List<IInteractableAction> GetAllActions()
+```
+
+**Returns:** A list of all actions on this interactable.  
+
+### `GetAvailableActions(InteractionContext)`
+
+Returns a list of actions that are currently available in the given context.
+The returned list is usually sorted by action ID for consistent ordering.
+
+```csharp
+List<IInteractableAction> GetAvailableActions(InteractionContext context)
+```
+
+**Parameters**
+
+| Name | Type | Description |
+|---|---|---|
+| `context` | `FireSoftworks.Interaction.InteractionContext` | The interaction context containing information about the interactor and environment. |
+
+**Returns:** A list of available actions in the current context.  
+
+### `GetGameObject()`
+
+Returns the GameObject associated with this interactable.
+
+```csharp
+GameObject GetGameObject()
+```
+
+**Returns:** The GameObject component of this interactable object.  
+
+### `OnFocusEnter(InteractionContext)`
+
+Called when the Interactor focuses on this object for the first time.
+Use this to trigger entry animations, sounds, or other visual feedback.
+
+```csharp
+void OnFocusEnter(InteractionContext context)
+```
+
+**Parameters**
+
+| Name | Type | Description |
+|---|---|---|
+| `context` | `FireSoftworks.Interaction.InteractionContext` | The interaction context containing information about the interactor. |
+
+### `OnFocusExit()`
+
+Called when the Interactor is no longer focusing on this object.
+Use this to trigger exit animations or cleanup state.
+
+```csharp
+void OnFocusExit()
+```
+

@@ -1,0 +1,94 @@
+---
+title: InteractionResult
+description: Struct representing the outcome of an executed interaction action, with a success flag and optional message.
+sidebar:
+  label: InteractionResult
+---
+
+**Namespace:** `FireSoftworks.Interaction`  
+**Type:** `struct` · `[Serializable]`  
+**Assembly:** `FireSofworks.InteractionSystem`
+
+Lightweight, serializable result value returned from action execution. Carried by `ActionExecutedEventArgs.Result`.
+
+```csharp
+[Serializable]
+public struct InteractionResult
+```
+
+---
+
+## Fields
+
+### `Success`
+
+```csharp
+public bool Success;
+```
+
+`true` if the action completed successfully, `false` otherwise.
+
+---
+
+### `Message`
+
+```csharp
+public string Message;
+```
+
+Optional human-readable message describing the outcome. Useful for debugging or displaying player feedback (e.g., `"Inventory full"`, `"Door already open"`).
+
+---
+
+## Static factory methods
+
+### `Ok(string?)`
+
+```csharp
+public static InteractionResult Ok(string message = null)
+```
+
+Creates a successful result. `InteractorBase.ExecuteInteraction()` always calls `Ok()` after execution.
+
+```csharp
+return InteractionResult.Ok("Consumed successfully");
+```
+
+---
+
+### `Fail(string?)`
+
+```csharp
+public static InteractionResult Fail(string message = null)
+```
+
+Creates a failed result. Use this in custom `Execute()` overrides that call `RaiseActionExecuted` directly.
+
+```csharp
+if (!hasKey)
+    return InteractionResult.Fail("You need a key to open this.");
+```
+
+---
+
+## Usage in a custom action
+
+```csharp
+// In a custom InteractorBase subclass:
+public override void ExecuteInteraction()
+{
+    if (!isValidInteractionSelected) return;
+
+    var action = currentActions[selectedActionIndex];
+    if (!action.IsAvailable(currentContext))
+    {
+        RaiseActionExecuted(currentTarget, action,
+            InteractionResult.Fail("Action not available"));
+        return;
+    }
+
+    action.Execute(currentContext);
+    RaiseActionExecuted(currentTarget, action, InteractionResult.Ok());
+    EndInteraction();
+}
+```

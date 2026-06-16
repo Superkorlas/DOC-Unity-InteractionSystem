@@ -1,0 +1,138 @@
+---
+title: InteractorBase
+description: Abstract base class for all interactors. Provides action management, selection, cycling, and the full event pipeline.
+sidebar:
+  label: InteractorBase
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+**Namespace:** `FireSoftworks.Interaction`  
+**Type:** Abstract class · MonoBehaviour · partial  
+**Assembly:** `FireSofworks.InteractionSystem`  
+**Implements:** `IInteractor`
+
+Abstract base class for all interactors. Implements the full action management, selection, and event-raising pipeline — leaving only detection logic to subclasses.
+
+```csharp
+public abstract partial class InteractorBase : MonoBehaviour, IInteractor
+```
+
+<Aside type="tip">
+Extend this class to create a custom interactor (proximity, 2D, VR, click-to-interact…). You only need to set `currentTarget`, call `RaiseInteractionStarted()`, and call `EndInteraction()`. See the [Extending guide](/Unity-InteractionSystem/guides/extending/).
+</Aside>
+
+---
+
+## Inspector fields
+
+| Field | Type | Default | Description |
+|---|---|---|---|
+| `showUnavailableActions` | `bool` | `true` | Show unavailable actions in the UI grayed out. |
+| `interactToShowActions` | `bool` | `false` | When `true`, first press shows actions; second press executes the selected one. |
+
+### UnityEvents (Inspector)
+
+| Field | Args type | Fires when |
+|---|---|---|
+| `onInteractionStarted` | `InteractionLifecycleEventArgs` | Focus begins |
+| `onActionsDiscovered` | `ActionsDiscoveredEventArgs` | Target focused, actions built |
+| `onShowActionsDiscovered` | `ActionsDiscoveredEventArgs` | Action menu should appear |
+| `onActionSelectionChanged` | `ActionSelectionChangedEventArgs` | Selected index changes |
+| `onActionExecuted` | `ActionExecutedEventArgs` | Action executes |
+| `onInteractionEnded` | `InteractionLifecycleEventArgs` | Focus lost |
+
+---
+
+## Protected state
+
+| Field | Type | Description |
+|---|---|---|
+| `currentTarget` | `IInteractable` | The currently focused interactable. Set by subclass detection logic. |
+| `currentActions` | `List<IInteractableAction>` | Cached action list for the current target. |
+| `selectedActionIndex` | `int` | Index of the selected action; `-1` = none selected. |
+| `currentContext` | `InteractionContext` | The interaction context built by the subclass. |
+| `isInteractionModeEnabled` | `bool` | `true` after `ShowInteractions()` is called. |
+
+---
+
+## IInteractor properties
+
+### `isInteractionAvailable`
+`true` when `currentTarget != null`.
+
+### `isValidInteractionSelected`
+`true` when a target is focused and `selectedActionIndex` points to a valid action.
+
+### `SelectedAction`
+Returns `currentActions[selectedActionIndex]`, or `null`.
+
+---
+
+## Virtual methods (override in subclasses)
+
+### `HandleInteraction()`
+
+```csharp
+public virtual void HandleInteraction()
+```
+
+Delegates to `ShowInteractions()` or `ExecuteInteraction()` based on `interactToShowActions` and current state.
+
+---
+
+### `ShowInteractions()`
+
+```csharp
+public virtual void ShowInteractions()
+```
+
+Fires `ShowActionsDiscovered`, selects the first available action, and sets `isInteractionModeEnabled = true`.
+
+---
+
+### `ExecuteInteraction()`
+
+```csharp
+public virtual void ExecuteInteraction()
+```
+
+Validates that `SelectedAction.IsAvailable()`, calls `Execute()`, fires `ActionExecuted`, then calls `EndInteraction()`.
+
+---
+
+### `EndInteraction()`
+
+```csharp
+public virtual void EndInteraction()
+```
+
+Calls `ClearCurrentTarget()` which: calls `currentTarget.OnFocusExit()`, fires `InteractionEnded`, clears all state.
+
+---
+
+## C# Events
+
+| Event | Delegate type | Fires when |
+|---|---|---|
+| `ActionsDiscovered` | `Action<ActionsDiscoveredEventArgs>` | New target focused |
+| `ShowActionsDiscovered` | `Action<ActionsDiscoveredEventArgs>` | Action menu should appear |
+| `ActionSelectionChanged` | `Action<ActionSelectionChangedEventArgs>` | Selection changes |
+| `ActionExecuted` | `Action<ActionExecutedEventArgs>` | Action completes |
+| `InteractionStarted` | `Action<InteractionLifecycleEventArgs>` | Focus begins |
+| `InteractionEnded` | `Action<InteractionLifecycleEventArgs>` | Focus lost |
+
+---
+
+## Protected event raisers (for subclasses)
+
+```csharp
+protected void RaiseActionsDiscovered(IInteractable target, IReadOnlyList<IInteractableAction> actions, InteractionContext context);
+protected void RaiseShowActionsDiscovered(IInteractable target, IReadOnlyList<IInteractableAction> actions, InteractionContext context);
+protected void RaiseActionSelectionChanged(IInteractable target, int index, IInteractableAction action);
+protected void RaiseActionExecuted(IInteractable target, IInteractableAction action, InteractionResult result);
+protected void RaiseInteractionStarted(IInteractable target);
+protected void RaiseInteractionEnded(IInteractable target);
+```
+
+Call these from your subclass after updating `currentTarget` to notify all subscribers (both C# event listeners and Inspector-wired UnityEvents).
