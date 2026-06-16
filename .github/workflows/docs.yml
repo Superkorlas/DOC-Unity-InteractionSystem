@@ -38,7 +38,7 @@ jobs:
       - name: Build Astro site
         env:
           NODE_ENV: production
-          BASE_PATH: /Unity-InteractionSystem
+          BASE_PATH: /DOC-Unity-InteractionSystem
         run: npm run build
 
       - name: Upload Pages artifact
